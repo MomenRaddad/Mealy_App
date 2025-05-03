@@ -6,7 +6,6 @@ import 'user_screens/tasks/tasks_screen.dart';
 import 'user_screens/meals/meals_screen.dart';
 import 'user_screens/profile/profile_screen.dart';
 import 'user_screens/settings/settings_screen.dart';
-
 class MainNavigationPage extends StatefulWidget {
   @override
   _MainNavigationPageState createState() => _MainNavigationPageState();
