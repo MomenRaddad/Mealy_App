@@ -18,8 +18,7 @@ class MyApp extends StatelessWidget {
       theme: AppTheme.lightTheme,
       initialRoute: AppRoutes.accountSelector,
 
-      onGenerateRoute:
-          AppRoutes.generateRoute, // ✅ تأكد من تمرير `generateRoute`
+      onGenerateRoute: AppRoutes.generateRoute,
     );
   }
 }

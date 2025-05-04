@@ -9,6 +9,8 @@ import 'user_screens/profile/profile_screen.dart';
 import 'user_screens/settings/settings_screen.dart';
 
 class UserNavigationPage extends StatefulWidget {
+  const UserNavigationPage({super.key});
+
   @override
   _UserNavigationPageState createState() => _UserNavigationPageState();
 }
@@ -27,6 +29,7 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
     return SafeArea(
       child: PersistentTabView(
         navBarHeight: MediaQuery.of(context).size.height * 0.07,
+        padding: AppNavbarStyle.padding,
 
         context,
         controller: _controller,
@@ -54,7 +57,7 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
           ),
           PersistentBottomNavBarItem(
             icon: Icon(Icons.add, color: Colors.white),
-            title: "Add",
+            title: "",
             activeColorPrimary: AppColors.primary,
             inactiveColorPrimary: AppColors.textSecondary,
             textStyle: AppNavbarStyle.textStyle,

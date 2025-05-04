@@ -8,6 +8,8 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import '../../core/colors.dart';
 
 class AdminNavigationPage extends StatefulWidget {
+  const AdminNavigationPage({super.key});
+
   @override
   _AdminNavigationPageState createState() => _AdminNavigationPageState();
 }
@@ -25,6 +27,7 @@ class _AdminNavigationPageState extends State<AdminNavigationPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: PersistentTabView(
+        padding: AppNavbarStyle.padding,
         context,
         navBarHeight: MediaQuery.of(context).size.height * 0.07,
         controller: _controller,
@@ -44,7 +47,7 @@ class _AdminNavigationPageState extends State<AdminNavigationPage> {
             textStyle: AppNavbarStyle.textStyle,
           ),
           PersistentBottomNavBarItem(
-            icon: Icon(Icons.list, size: AppNavbarStyle.iconSize),
+            icon: Icon(Icons.receipt, size: AppNavbarStyle.iconSize),
             title: "Meals",
             activeColorPrimary: AppColors.primary,
             inactiveColorPrimary: AppColors.textSecondary,
