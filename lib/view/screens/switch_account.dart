@@ -8,7 +8,6 @@ class AccountSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Choose Account Type")),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
