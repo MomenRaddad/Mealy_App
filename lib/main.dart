@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'core/app_theme.dart';
 import 'core/routes.dart';
 
@@ -12,11 +13,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'NutriTask',
+      title: 'Mealy',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      // initialRoute: AppRoutes.playground,
-      onGenerateRoute: AppRoutes.generateRoute,
+      initialRoute: AppRoutes.accountSelector,
+
+      onGenerateRoute:
+          AppRoutes.generateRoute, // ✅ تأكد من تمرير `generateRoute`
     );
   }
 }

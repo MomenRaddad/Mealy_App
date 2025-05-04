@@ -6,13 +6,14 @@ import 'user_screens/tasks/tasks_screen.dart';
 import 'user_screens/meals/meals_screen.dart';
 import 'user_screens/profile/profile_screen.dart';
 import 'user_screens/settings/settings_screen.dart';
-class MainNavigationPage extends StatefulWidget {
+
+class UserNavigationPage extends StatefulWidget {
   @override
-  _MainNavigationPageState createState() => _MainNavigationPageState();
+  _UserNavigationPageState createState() => _UserNavigationPageState();
 }
 
-class _MainNavigationPageState extends State<MainNavigationPage> {
-  late PersistentTabController _controller;
+class _UserNavigationPageState extends State<UserNavigationPage> {
+  late final PersistentTabController _controller;
 
   @override
   void initState() {

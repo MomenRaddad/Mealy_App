@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/view/screens/switch_account.dart';
 
-class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+class SettingsAdminScreen extends StatelessWidget {
+  const SettingsAdminScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
