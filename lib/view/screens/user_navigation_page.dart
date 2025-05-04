@@ -23,52 +23,54 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PersistentTabView(
-      context,
-      controller: _controller,
-      screens: [
-        HomeScreen(),
-        TasksScreen(),
-        MealsScreen(),
-        ProfileScreen(),
-        SettingsScreen(),
-      ],
-      items: [
-        PersistentBottomNavBarItem(
-          icon: Icon(Icons.home),
-          title: "Home",
-          activeColorPrimary: AppColors.primary,
-          inactiveColorPrimary: AppColors.textSecondary,
+    return SafeArea(
+      child: PersistentTabView(
+        context,
+        controller: _controller,
+        screens: [
+          HomeScreen(),
+          TasksScreen(),
+          MealsScreen(),
+          ProfileScreen(),
+          SettingsScreen(),
+        ],
+        items: [
+          PersistentBottomNavBarItem(
+            icon: Icon(Icons.home),
+            title: "Home",
+            activeColorPrimary: AppColors.primary,
+            inactiveColorPrimary: AppColors.textSecondary,
+          ),
+          PersistentBottomNavBarItem(
+            icon: Icon(Icons.list),
+            title: "Tasks",
+            activeColorPrimary: AppColors.primary,
+            inactiveColorPrimary: AppColors.textSecondary,
+          ),
+          PersistentBottomNavBarItem(
+            icon: Icon(Icons.add, color: Colors.white),
+            title: "Add",
+            activeColorPrimary: AppColors.primary,
+            inactiveColorPrimary: AppColors.textSecondary,
+          ),
+          PersistentBottomNavBarItem(
+            icon: Icon(Icons.person),
+            title: "Profile",
+            activeColorPrimary: AppColors.primary,
+            inactiveColorPrimary: AppColors.textSecondary,
+          ),
+          PersistentBottomNavBarItem(
+            icon: Icon(Icons.settings),
+            title: "Settings",
+            activeColorPrimary: AppColors.primary,
+            inactiveColorPrimary: AppColors.textSecondary,
+          ),
+        ],
+        navBarStyle: NavBarStyle.style15,
+        decoration: NavBarDecoration(
+          borderRadius: BorderRadius.circular(10.0),
+          colorBehindNavBar: AppColors.background,
         ),
-        PersistentBottomNavBarItem(
-          icon: Icon(Icons.list),
-          title: "Tasks",
-          activeColorPrimary: AppColors.primary,
-          inactiveColorPrimary: AppColors.textSecondary,
-        ),
-        PersistentBottomNavBarItem(
-          icon: Icon(Icons.add, color: Colors.white),
-          title: "Add",
-          activeColorPrimary: AppColors.primary,
-          inactiveColorPrimary: AppColors.textSecondary,
-        ),
-        PersistentBottomNavBarItem(
-          icon: Icon(Icons.person),
-          title: "Profile",
-          activeColorPrimary: AppColors.primary,
-          inactiveColorPrimary: AppColors.textSecondary,
-        ),
-        PersistentBottomNavBarItem(
-          icon: Icon(Icons.settings),
-          title: "Settings",
-          activeColorPrimary: AppColors.primary,
-          inactiveColorPrimary: AppColors.textSecondary,
-        ),
-      ],
-      navBarStyle: NavBarStyle.style15,
-      decoration: NavBarDecoration(
-        borderRadius: BorderRadius.circular(10.0),
-        colorBehindNavBar: AppColors.background,
       ),
     );
   }

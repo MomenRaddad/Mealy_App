@@ -20,14 +20,8 @@ class AppTheme {
           fontWeight: FontWeight.bold,
           color: AppColors.textPrimary,
         ),
-        bodyLarge: TextStyle(
-          fontSize: 16,
-          color: AppColors.textPrimary,
-        ),
-        bodyMedium: TextStyle(
-          fontSize: 14,
-          color: AppColors.textSecondary,
-        ),
+        bodyLarge: TextStyle(fontSize: 16, color: AppColors.textPrimary),
+        bodyMedium: TextStyle(fontSize: 14, color: AppColors.textSecondary),
       ),
 
       //The Application bar theme
@@ -42,7 +36,7 @@ class AppTheme {
         ),
       ),
 
-      //Pretty Buttons structure 
+      //Pretty Buttons structure
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColors.primary,
@@ -54,7 +48,7 @@ class AppTheme {
         ),
       ),
 
-      //The input Field Structure :3 
+      //The input Field Structure :3
       inputDecorationTheme: const InputDecorationTheme(
         filled: true,
         fillColor: Colors.white,
@@ -69,10 +63,7 @@ class AppTheme {
       //Pretty Snack bars
       snackBarTheme: const SnackBarThemeData(
         backgroundColor: AppColors.primary,
-        contentTextStyle: TextStyle(
-          color: Colors.white,
-          fontSize: 14,
-        ),
+        contentTextStyle: TextStyle(color: Colors.white, fontSize: 14),
         behavior: SnackBarBehavior.floating,
       ),
     );
