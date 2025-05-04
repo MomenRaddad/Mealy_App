@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/view/screens/admin_navigation_page.dart';
-import 'package:meal_app/view/screens/user_navigation_page.dart';
 
 class AccountSelector extends StatelessWidget {
   const AccountSelector({super.key});

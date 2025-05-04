@@ -66,6 +66,7 @@ class AppTheme {
         contentTextStyle: TextStyle(color: Colors.white, fontSize: 14),
         behavior: SnackBarBehavior.floating,
       ),
+      iconTheme: const IconThemeData(color: AppColors.textPrimary, size: 32),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meal_app/core/nav_bar_theme.dart';
 import 'package:meal_app/view/screens/admin_screens/admin_home/admin_home.dart';
 import 'package:meal_app/view/screens/admin_screens/meals_management/meals_screen.dart';
 import 'package:meal_app/view/screens/admin_screens/settings/settings_screen.dart';
@@ -25,6 +26,7 @@ class _AdminNavigationPageState extends State<AdminNavigationPage> {
     return SafeArea(
       child: PersistentTabView(
         context,
+        navBarHeight: MediaQuery.of(context).size.height * 0.07,
         controller: _controller,
         screens: [
           AdminHomeScreen(),
@@ -35,34 +37,38 @@ class _AdminNavigationPageState extends State<AdminNavigationPage> {
         ],
         items: [
           PersistentBottomNavBarItem(
-            icon: Icon(Icons.home),
+            icon: Icon(Icons.home, size: AppNavbarStyle.iconSize),
             title: "Admin",
             activeColorPrimary: AppColors.primary,
             inactiveColorPrimary: AppColors.textSecondary,
+            textStyle: AppNavbarStyle.textStyle,
           ),
           PersistentBottomNavBarItem(
-            icon: Icon(Icons.list),
+            icon: Icon(Icons.list, size: AppNavbarStyle.iconSize),
             title: "Meals",
             activeColorPrimary: AppColors.primary,
             inactiveColorPrimary: AppColors.textSecondary,
+            textStyle: AppNavbarStyle.textStyle,
           ),
           PersistentBottomNavBarItem(
             icon: Icon(Icons.add, color: Colors.white),
-            title: "Users",
+            title: "",
             activeColorPrimary: AppColors.primary,
             inactiveColorPrimary: AppColors.textSecondary,
           ),
           PersistentBottomNavBarItem(
-            icon: Icon(Icons.person),
+            icon: Icon(Icons.person, size: AppNavbarStyle.iconSize),
             title: "Users",
             activeColorPrimary: AppColors.primary,
             inactiveColorPrimary: AppColors.textSecondary,
+            textStyle: AppNavbarStyle.textStyle,
           ),
           PersistentBottomNavBarItem(
-            icon: Icon(Icons.settings),
+            icon: Icon(Icons.settings, size: AppNavbarStyle.iconSize),
             title: "Settings",
             activeColorPrimary: AppColors.primary,
             inactiveColorPrimary: AppColors.textSecondary,
+            textStyle: AppNavbarStyle.textStyle,
           ),
         ],
         navBarStyle: NavBarStyle.style15,

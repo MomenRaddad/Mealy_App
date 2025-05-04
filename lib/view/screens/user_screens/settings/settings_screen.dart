@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/core/routes.dart';
-import 'package:meal_app/view/screens/switch_account.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
