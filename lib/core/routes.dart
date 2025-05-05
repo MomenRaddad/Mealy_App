@@ -6,7 +6,7 @@ import '../view/screens/admin_navigation_page.dart';
 
 class AppRoutes {
   // Route names
-  static const String accountSelector = '/accountSelector'; // ✅ تعديل الاسم
+  static const String accountSelector = '/accountSelector'; 
 
   static const String userNav = '/userNav';
   static const String adminNav = '/adminNav';
