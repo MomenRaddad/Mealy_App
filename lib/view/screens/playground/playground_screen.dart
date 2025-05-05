@@ -8,7 +8,7 @@ import '../../components/empty_state_widget.dart';
 import '../../components/pill_label.dart';
 
 class PlaygroundScreen extends StatelessWidget {
-  const PlaygroundScreen({Key? key}) : super(key: key);
+  const PlaygroundScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,10 +18,7 @@ class PlaygroundScreen extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         children: [
           const SectionTitle(text: "Buttons"),
-          CustomButton(
-            text: "Primary Button",
-            onPressed: () {},
-          ),
+          CustomButton(text: "Primary Button", onPressed: () {}),
           const SizedBox(height: 20),
           const SectionTitle(text: "Search Bar"),
           SearchBarWidget(
@@ -51,7 +48,11 @@ class PlaygroundScreen extends StatelessWidget {
             runSpacing: 10,
             children: const [
               PillLabel(text: "Simple"),
-              PillLabel(text: "Difficult", backgroundColor: Colors.red, textColor: Colors.white),
+              PillLabel(
+                text: "Difficult",
+                backgroundColor: Colors.red,
+                textColor: Colors.white,
+              ),
               PillLabel(text: "20 mins", backgroundColor: Colors.orange),
             ],
           ),

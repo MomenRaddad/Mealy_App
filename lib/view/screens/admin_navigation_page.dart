@@ -3,7 +3,7 @@ import 'package:meal_app/core/nav_bar_theme.dart';
 import 'package:meal_app/view/screens/admin_screens/admin_home/admin_home.dart';
 import 'package:meal_app/view/screens/admin_screens/meals_management/meals_screen.dart';
 import 'package:meal_app/view/screens/admin_screens/settings/settings_screen.dart';
-import 'package:meal_app/view/screens/admin_screens/user_management/user_mangement_screen.dart';
+import 'package:meal_app/view/screens/admin_screens/user_management/user_management_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import '../../core/colors.dart';
 
@@ -11,6 +11,7 @@ class AdminNavigationPage extends StatefulWidget {
   const AdminNavigationPage({super.key});
 
   @override
+  // ignore: library_private_types_in_public_api
   _AdminNavigationPageState createState() => _AdminNavigationPageState();
 }
 

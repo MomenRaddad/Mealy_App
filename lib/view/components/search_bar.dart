@@ -8,17 +8,21 @@ class SearchBarWidget extends StatelessWidget {
   final TextEditingController? controller;
 
   const SearchBarWidget({
-    Key? key,
+    super.key,
     required this.onChanged,
     this.hintText = "Search...",
     this.controller,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppConstants.paddingMedium),
-      padding: const EdgeInsets.symmetric(horizontal: AppConstants.paddingMedium),
+      margin: const EdgeInsets.symmetric(
+        horizontal: AppConstants.paddingMedium,
+      ),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppConstants.paddingMedium,
+      ),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(AppConstants.radiusLarge),

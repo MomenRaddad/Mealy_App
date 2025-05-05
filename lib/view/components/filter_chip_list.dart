@@ -8,11 +8,11 @@ class FilterChipList extends StatefulWidget {
   final String? initiallySelected;
 
   const FilterChipList({
-    Key? key,
+    super.key,
     required this.filters,
     required this.onSelected,
     this.initiallySelected,
-  }) : super(key: key);
+  });
 
   @override
   State<FilterChipList> createState() => _FilterChipListState();
@@ -36,28 +36,29 @@ class _FilterChipListState extends State<FilterChipList> {
         horizontal: AppConstants.paddingMedium,
       ),
       child: Row(
-        children: widget.filters.map((filter) {
-          final bool isSelected = filter == selectedFilter;
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 6.0),
-            child: ChoiceChip(
-              label: Text(filter),
-              labelStyle: TextStyle(
-                color: isSelected ? Colors.white : AppColors.textPrimary,
-                fontWeight: FontWeight.w500,
-              ),
-              selectedColor: AppColors.primary,
-              backgroundColor: AppColors.background,
-              selected: isSelected,
-              onSelected: (_) {
-                setState(() {
-                  selectedFilter = filter;
-                });
-                widget.onSelected(filter);
-              },
-            ),
-          );
-        }).toList(),
+        children:
+            widget.filters.map((filter) {
+              final bool isSelected = filter == selectedFilter;
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 6.0),
+                child: ChoiceChip(
+                  label: Text(filter),
+                  labelStyle: TextStyle(
+                    color: isSelected ? Colors.white : AppColors.textPrimary,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  selectedColor: AppColors.primary,
+                  backgroundColor: AppColors.background,
+                  selected: isSelected,
+                  onSelected: (_) {
+                    setState(() {
+                      selectedFilter = filter;
+                    });
+                    widget.onSelected(filter);
+                  },
+                ),
+              );
+            }).toList(),
       ),
     );
   }

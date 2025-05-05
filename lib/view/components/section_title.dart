@@ -6,16 +6,13 @@ class SectionTitle extends StatelessWidget {
   final String text;
   final EdgeInsetsGeometry? padding;
 
-  const SectionTitle({
-    Key? key,
-    required this.text,
-    this.padding,
-  }) : super(key: key);
+  const SectionTitle({super.key, required this.text, this.padding});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: padding ??
+      padding:
+          padding ??
           const EdgeInsets.symmetric(
             vertical: AppConstants.paddingMedium,
             horizontal: AppConstants.paddingMedium,

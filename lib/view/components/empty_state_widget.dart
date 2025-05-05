@@ -9,12 +9,12 @@ class EmptyStateWidget extends StatelessWidget {
   final double iconSize;
 
   const EmptyStateWidget({
-    Key? key,
+    super.key,
     required this.title,
     this.subtitle,
-    this.icon = Icons.inbox, 
+    this.icon = Icons.inbox,
     this.iconSize = 64,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

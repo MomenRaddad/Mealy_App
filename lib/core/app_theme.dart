@@ -14,11 +14,13 @@ class AppTheme {
           fontSize: 26,
           fontWeight: FontWeight.bold,
           color: AppColors.textPrimary,
+          fontFamily: 'Lato',
         ),
         headlineMedium: TextStyle(
           fontSize: 22,
           fontWeight: FontWeight.bold,
           color: AppColors.textPrimary,
+          fontFamily: 'Lato',
         ),
         bodyLarge: TextStyle(fontSize: 16, color: AppColors.textPrimary),
         bodyMedium: TextStyle(fontSize: 14, color: AppColors.textSecondary),

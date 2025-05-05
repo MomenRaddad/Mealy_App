@@ -10,13 +10,13 @@ class PillLabel extends StatelessWidget {
   final double fontSize;
 
   const PillLabel({
-    Key? key,
+    super.key,
     required this.text,
     this.backgroundColor = AppColors.accent2,
     this.textColor = AppColors.textPrimary,
     this.padding = const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
     this.fontSize = AppConstants.fontSmall,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
