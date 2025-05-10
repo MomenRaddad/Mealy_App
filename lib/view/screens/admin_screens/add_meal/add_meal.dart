@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:meal_app/core/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meal_app/utils/size_extensions.dart';
+import 'package:provider/provider.dart';
+import 'package:meal_app/viewmodels/meal_viewmodel.dart';
 
 import 'meal_image_picker.dart';
 import 'meal_info_fields.dart';
@@ -31,6 +33,9 @@ class _AddMealScreenState extends State<AddMealScreen> {
     }
   }
 
+  final TextEditingController _caloriesController = TextEditingController(
+    text: '1345',
+  );
   final TextEditingController _mealNameController = TextEditingController(
     text: 'Alfredo Chicken Pasta',
   );
@@ -146,53 +151,93 @@ class _AddMealScreenState extends State<AddMealScreen> {
   );
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('Meal Management'),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-        ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              MealImagePicker(
-                selectedImage: _selectedImage,
-                onPickImage: _pickImage,
+    return ChangeNotifierProvider(
+      create: (_) => MealViewModel(),
+      child: Consumer<MealViewModel>(
+        builder: (context, mealViewModel, _) {
+          return SafeArea(
+            child: Scaffold(
+              appBar: AppBar(
+                title: const Text('Meal Management'),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                actions: [
+                  IconButton(
+                    icon: Icon(Icons.save),
+                    onPressed:
+                        mealViewModel.isLoading
+                            ? null
+                            : () async {
+                              await mealViewModel.addMeal(
+                                name: _mealNameController.text,
+                                cuisine: selectedCuisine,
+                                duration: selectedDuration,
+                                calories: _caloriesController.text,
+                                dietaryType: selectedDietType,
+                                ingredients: ingredients,
+                                steps: _stepsController.text,
+                                imageFile: _selectedImage,
+                              );
+
+                              if (mealViewModel.errorMessage == null) {
+                                Navigator.of(context).pop();
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(mealViewModel.errorMessage!),
+                                  ),
+                                );
+                              }
+                            },
+                  ),
+                ],
               ),
-              SizedBox(height: context.hp(20)),
-              MealInfoFields(
-                mealNameController: _mealNameController,
-                selectedCuisine: selectedCuisine,
-                selectedDuration: selectedDuration,
-                selectedDietType: selectedDietType,
-                onCuisineChanged:
-                    (value) => setState(() => selectedCuisine = value),
-                onDurationChanged:
-                    (value) => setState(() => selectedDuration = value),
-                onDietTypeChanged:
-                    (value) => setState(() => selectedDietType = value),
+              body: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    MealImagePicker(
+                      selectedImage: _selectedImage,
+                      onPickImage: _pickImage,
+                    ),
+                    SizedBox(height: context.hp(20)),
+                    MealInfoFields(
+                      mealNameController: _mealNameController,
+                      selectedCuisine: selectedCuisine,
+                      selectedDuration: selectedDuration,
+                      selectedDietType: selectedDietType,
+                      onCuisineChanged:
+                          (value) => setState(() => selectedCuisine = value),
+                      onDurationChanged:
+                          (value) => setState(() => selectedDuration = value),
+                      onDietTypeChanged:
+                          (value) => setState(() => selectedDietType = value),
+                      caloriesController: _caloriesController,
+                    ),
+                    SizedBox(height: context.hp(20)),
+                    IngredientsList(
+                      ingredients: ingredients,
+                      onRemoveIngredient: _removeIngredient,
+                      onUnitChanged: (index, val) {
+                        setState(() {
+                          ingredients[index]['unit'] = val;
+                        });
+                      },
+                    ),
+                    AddIngredientButton(onPressed: _addIngredient),
+                    const SizedBox(height: 16),
+                    StepsField(stepsController: _stepsController),
+                    if (mealViewModel.isLoading)
+                      Center(child: CircularProgressIndicator()),
+                  ],
+                ),
               ),
-              SizedBox(height: context.hp(20)),
-              IngredientsList(
-                ingredients: ingredients,
-                onRemoveIngredient: _removeIngredient,
-                onUnitChanged: (index, val) {
-                  setState(() {
-                    ingredients[index]['unit'] = val;
-                  });
-                },
-              ),
-              AddIngredientButton(onPressed: _addIngredient),
-              const SizedBox(height: 16),
-              StepsField(stepsController: _stepsController),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }

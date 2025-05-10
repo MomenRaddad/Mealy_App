@@ -11,7 +11,7 @@ class MealInfoFields extends StatelessWidget {
   final Function(String) onCuisineChanged;
   final Function(String) onDurationChanged;
   final Function(String) onDietTypeChanged;
-
+  final TextEditingController caloriesController;
   const MealInfoFields({
     super.key,
     required this.mealNameController,
@@ -21,8 +21,8 @@ class MealInfoFields extends StatelessWidget {
     required this.onCuisineChanged,
     required this.onDurationChanged,
     required this.onDietTypeChanged,
+    required this.caloriesController,
   });
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -59,10 +59,9 @@ class MealInfoFields extends StatelessWidget {
           children: [
             Expanded(
               child: TextFormField(
+                controller: caloriesController,
                 keyboardType: TextInputType.number,
-                initialValue: '1345',
                 decoration: InputStyles.common("Calories"),
-                readOnly: false,
               ),
             ),
             SizedBox(width: context.wp(10)),
