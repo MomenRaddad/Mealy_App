@@ -7,6 +7,7 @@ import 'package:meal_app/view/screens/admin_screens/settings/settings_screen.dar
 import 'package:meal_app/view/screens/admin_screens/user_management/user_management_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import '../../core/colors.dart';
+import '../../core/routes.dart';
 
 class AdminNavigationPage extends StatefulWidget {
   const AdminNavigationPage({super.key});
@@ -36,7 +37,7 @@ class _AdminNavigationPageState extends State<AdminNavigationPage> {
         screens: [
           AdminHomeScreen(),
           MealsManagementScreen(),
-          AddMealScreen(),
+          Container(),
           UserManagementScreen(),
           SettingsAdminScreen(),
         ],
@@ -56,7 +57,12 @@ class _AdminNavigationPageState extends State<AdminNavigationPage> {
             textStyle: AppNavbarStyle.textStyle,
           ),
           PersistentBottomNavBarItem(
-            icon: Icon(Icons.add, color: Colors.white),
+            icon: GestureDetector(
+              onTap: () {
+                Navigator.of(context).pushNamed(AppRoutes.addMeal);
+              },
+              child: Icon(Icons.add, color: Colors.white),
+            ),
             title: "",
             activeColorPrimary: AppColors.primary,
             inactiveColorPrimary: AppColors.textSecondary,
