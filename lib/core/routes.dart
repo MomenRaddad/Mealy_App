@@ -3,6 +3,7 @@ import 'package:meal_app/view/screens/admin_screens/settings/settings_screen.dar
 import 'package:meal_app/view/screens/switch_account.dart';
 import '../view/screens/user_navigation_page.dart';
 import '../view/screens/admin_navigation_page.dart';
+import 'package:meal_app/view/screens/admin_screens/add_meal/add_meal.dart';
 
 class AppRoutes {
   // Route names
@@ -11,6 +12,7 @@ class AppRoutes {
   static const String userNav = '/userNav';
   static const String adminNav = '/adminNav';
   static const String settingsAdmin = '/settingsAdmin';
+  static const String addMeal = '/addMeal';
 
   // static const String mealDetails = '/meal-details';
   // static const String favorites = '/favorites';
@@ -25,6 +27,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => AdminNavigationPage());
       case settingsAdmin:
         return MaterialPageRoute(builder: (_) => SettingsAdminScreen());
+      case addMeal:
+        return MaterialPageRoute(builder: (_) => AddMealScreen());
       default:
         return MaterialPageRoute(
           builder:
