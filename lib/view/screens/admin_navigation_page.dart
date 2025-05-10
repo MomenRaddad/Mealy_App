@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/core/nav_bar_theme.dart';
+import 'package:meal_app/view/screens/admin_screens/add_meal/add_meal.dart';
 import 'package:meal_app/view/screens/admin_screens/admin_home/admin_home.dart';
 import 'package:meal_app/view/screens/admin_screens/meals_management/meals_screen.dart';
 import 'package:meal_app/view/screens/admin_screens/settings/settings_screen.dart';
@@ -35,7 +36,7 @@ class _AdminNavigationPageState extends State<AdminNavigationPage> {
         screens: [
           AdminHomeScreen(),
           MealsManagementScreen(),
-          UserManagementScreen(),
+          AddMealScreen(),
           UserManagementScreen(),
           SettingsAdminScreen(),
         ],
