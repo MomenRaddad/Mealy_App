@@ -28,11 +28,11 @@ class GoalCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Icon(icon, color: Colors.white, size: 28),
+          Icon(icon, color: Colors.black, size: 28),
           const SizedBox(height: 8),
           Text(
             title,
-            style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+            style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
           ),
           const SizedBox(height: 4),
           LinearProgressIndicator(
@@ -43,19 +43,19 @@ class GoalCard extends StatelessWidget {
           const SizedBox(height: 4),
           Text(
             progressText,
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(color: Colors.black),
           ),
           const SizedBox(height: 8),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: const [
               CircleAvatar(
-                backgroundColor: Colors.black,
-                child: Icon(Icons.remove, color: Colors.white),
+                backgroundColor: Colors.transparent,
+                child: Icon(Icons.remove_circle_outline, color: Colors.black),
               ),
               CircleAvatar(
-                backgroundColor: Colors.black,
-                child: Icon(Icons.add, color: Colors.white),
+                backgroundColor: Colors.transparent,
+                child: Icon(Icons.add_circle_outline, color: Colors.black),
               ),
             ],
           )
