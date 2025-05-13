@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:meal_app/core/colors.dart';
 
 class DateSelector extends StatefulWidget {
   const DateSelector({super.key});
@@ -54,10 +55,10 @@ class _DateSelectorState extends State<DateSelector> {
                     width: isSelected ? 64 : 42,
                     height: isSelected ? 64 : 42,
                     decoration: BoxDecoration(
-                      color: isSelected ? Colors.green : Colors.black,
+                      color: isSelected ? AppColors.primary : Colors.black,
                       shape: BoxShape.circle,
                       border: Border.all(
-                        color: _isToday(date) && !isSelected ? Colors.green : Colors.transparent,
+                        color: _isToday(date) && !isSelected ? AppColors.primary : Colors.transparent,
                         width: 6,
                       ),
                     ),
@@ -76,7 +77,7 @@ class _DateSelectorState extends State<DateSelector> {
                   Text(
                     DateFormat('E').format(date),
                     style: TextStyle(
-                      color: Colors.black,
+                      color: AppColors.textPrimary,
                       fontSize: 14,
                       fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
