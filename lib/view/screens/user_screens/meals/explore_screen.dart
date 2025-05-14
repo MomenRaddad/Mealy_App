@@ -41,7 +41,7 @@ Future<void> _loadMeals() async {
       meals = data.cast<Map<String, dynamic>>();
     });
   } catch (e) {
-    debugPrint("❌ Error loading meals.json: $e");
+    debugPrint(" Error loading meals.json: $e");
  
   }
 }
