@@ -16,7 +16,7 @@ class HeaderSection extends StatelessWidget {
           child: ClipOval(
             child: CachedNetworkImage(
               imageUrl:
-                  'https://as1.ftcdn.net/v2/jpg/06/99/46/60/1000_F_699466075_DaPTBNlNQTOwwjkOiFEoOvzDV0ByXR9E.jpg',
+                  'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3WVOAQ-lryrrplK2pFjnXHmkS_ZSa-VI_rA&s',
               fit: BoxFit.cover,
               width: context.wp(60),
               height: context.wp(60),
@@ -45,10 +45,10 @@ class HeaderSection extends StatelessWidget {
               onPressed: () {},
             ),
             const Positioned(
-              right: 8,
-              top: 8,
+              right: 5,
+              top: 5,
               child: CircleAvatar(
-                radius: 7,
+                radius: 9,
                 backgroundColor: Colors.red,
                 child: Text(
                   '9+',
