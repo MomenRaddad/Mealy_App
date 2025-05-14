@@ -5,10 +5,12 @@ import 'package:meal_app/core/colors.dart';
 class MealImagePicker extends StatelessWidget {
   final File? selectedImage;
   final VoidCallback onPickImage;
+  final String? defaultAsset;
   const MealImagePicker({
     super.key,
     required this.selectedImage,
     required this.onPickImage,
+    this.defaultAsset,
   });
 
   @override
@@ -25,12 +27,19 @@ class MealImagePicker extends StatelessWidget {
                     width: double.infinity,
                     fit: BoxFit.cover,
                   )
-                  : Image.network(
-                    'https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg',
-                    height: 200,
-                    width: double.infinity,
-                    fit: BoxFit.cover,
-                  ),
+                  : (defaultAsset != null
+                      ? Image.asset(
+                        defaultAsset!,
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      )
+                      : Image.network(
+                        'https://www.themealdb.com/images/media/meals/llcbn01574260722.jpg',
+                        height: 200,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      )),
         ),
         Positioned(
           top: 0,
