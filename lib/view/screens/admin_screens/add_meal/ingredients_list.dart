@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:meal_app/models/meal_model.dart';
 import 'package:meal_app/view/components/admin_components/custom_dropdown.dart';
 import 'package:meal_app/view/screens/admin_screens/add_meal/input_styles.dart';
 import 'package:meal_app/utils/size_extensions.dart';
 import 'package:meal_app/core/colors.dart';
 
-// Widget to show the list of ingredients
-class IngredientsList extends StatelessWidget {
+class IngredientsList extends StatefulWidget {
   final List<Map<String, String>> ingredients;
   final void Function(int) onRemoveIngredient;
   final void Function(int, String) onUnitChanged;
@@ -20,6 +20,11 @@ class IngredientsList extends StatelessWidget {
   });
 
   @override
+  State<IngredientsList> createState() => _IngredientsListState();
+}
+
+class _IngredientsListState extends State<IngredientsList> {
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -32,81 +37,64 @@ class IngredientsList extends StatelessWidget {
           ),
         ),
         SizedBox(height: context.hp(12)),
-        ...ingredients.asMap().entries.map((entry) {
+        ...widget.ingredients.asMap().entries.map((entry) {
           int index = entry.key;
           var ingredient = entry.value;
+
           return Padding(
             padding: EdgeInsets.only(bottom: context.hp(15)),
             child: Row(
               children: [
+                // ✅ name field
                 Expanded(
                   child: TextFormField(
                     initialValue: ingredient['name'],
-                    decoration: InputStyles.common("Ingredient").copyWith(
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color:
-                              showError &&
-                                      (ingredient['name']?.trim().isEmpty ??
-                                          true)
-                                  ? Colors.red
-                                  : AppColors.textPrimary,
-                          width: 2,
-                        ),
-                      ),
-                    ),
+                    decoration: InputStyles.common("Ingredient"),
                     validator:
                         (val) =>
                             (val == null || val.trim().isEmpty)
                                 ? 'Required'
                                 : null,
+                    onChanged:
+                        (val) => widget.ingredients[index]['name'] = val.trim(),
                   ),
                 ),
                 SizedBox(width: context.wp(8)),
+
+                // ✅ quantity field
                 SizedBox(
                   width: context.wp(100),
                   child: TextFormField(
                     initialValue: ingredient['quantity'],
-                    decoration: InputStyles.common("Quantity").copyWith(
-                      errorBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide(
-                          color:
-                              showError &&
-                                      (ingredient['quantity']?.trim().isEmpty ??
-                                          true)
-                                  ? Colors.red
-                                  : AppColors.textPrimary,
-                          width: 2,
-                        ),
-                      ),
-                    ),
+                    decoration: InputStyles.common("Qty"),
+                    keyboardType: TextInputType.number,
                     validator:
                         (val) =>
                             (val == null || val.trim().isEmpty)
                                 ? 'Required'
                                 : null,
+                    onChanged:
+                        (val) =>
+                            widget.ingredients[index]['quantity'] = val.trim(),
                   ),
                 ),
                 SizedBox(width: context.wp(8)),
+
+                // ✅ unit dropdown
                 Expanded(
                   child: CustomDropdownField(
                     label: 'Unit',
-                    selectedValue: ingredient['unit'] ?? 'liters',
-                    options: [
-                      'grams',
-                      'liters',
-                      'pieces',
-                      'cups',
-                      'tablespoons',
-                      'teaspoons',
-                    ],
-                    onSelected: (val) => onUnitChanged(index, val),
+                    selectedValue: ingredient['unit'] ?? 'g',
+                    options:
+                        UnitType.values
+                            .map((e) => e.toString().split('.').last)
+                            .toList(),
+                    onSelected: (val) => widget.onUnitChanged(index, val),
                   ),
                 ),
+
                 IconButton(
-                  onPressed: () => onRemoveIngredient(index),
+                  onPressed: () => widget.onRemoveIngredient(index),
                   icon: const Icon(Icons.delete, color: AppColors.error),
                 ),
               ],
