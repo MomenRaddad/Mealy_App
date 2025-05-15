@@ -4,16 +4,19 @@ import 'package:meal_app/view/screens/admin_screens/add_meal/input_styles.dart';
 import 'package:meal_app/utils/size_extensions.dart';
 import 'package:meal_app/core/colors.dart';
 
+// Widget to show the list of ingredients
 class IngredientsList extends StatelessWidget {
   final List<Map<String, String>> ingredients;
   final void Function(int) onRemoveIngredient;
   final void Function(int, String) onUnitChanged;
+  final bool showError;
 
   const IngredientsList({
     super.key,
     required this.ingredients,
     required this.onRemoveIngredient,
     required this.onUnitChanged,
+    this.showError = false,
   });
 
   @override
@@ -39,7 +42,25 @@ class IngredientsList extends StatelessWidget {
                 Expanded(
                   child: TextFormField(
                     initialValue: ingredient['name'],
-                    decoration: InputStyles.common("Ingredient"),
+                    decoration: InputStyles.common("Ingredient").copyWith(
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color:
+                              showError &&
+                                      (ingredient['name']?.trim().isEmpty ??
+                                          true)
+                                  ? Colors.red
+                                  : AppColors.textPrimary,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    validator:
+                        (val) =>
+                            (val == null || val.trim().isEmpty)
+                                ? 'Required'
+                                : null,
                   ),
                 ),
                 SizedBox(width: context.wp(8)),
@@ -47,15 +68,40 @@ class IngredientsList extends StatelessWidget {
                   width: context.wp(100),
                   child: TextFormField(
                     initialValue: ingredient['quantity'],
-                    decoration: InputStyles.common("Quantity"),
+                    decoration: InputStyles.common("Quantity").copyWith(
+                      errorBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color:
+                              showError &&
+                                      (ingredient['quantity']?.trim().isEmpty ??
+                                          true)
+                                  ? Colors.red
+                                  : AppColors.textPrimary,
+                          width: 2,
+                        ),
+                      ),
+                    ),
+                    validator:
+                        (val) =>
+                            (val == null || val.trim().isEmpty)
+                                ? 'Required'
+                                : null,
                   ),
                 ),
                 SizedBox(width: context.wp(8)),
                 Expanded(
                   child: CustomDropdownField(
                     label: 'Unit',
-                    selectedValue: ingredient['unit'] ?? 'liter',
-                    options: ['liter', 'gram', 'piece'],
+                    selectedValue: ingredient['unit'] ?? 'liters',
+                    options: [
+                      'grams',
+                      'liters',
+                      'pieces',
+                      'cups',
+                      'tablespoons',
+                      'teaspoons',
+                    ],
                     onSelected: (val) => onUnitChanged(index, val),
                   ),
                 ),
