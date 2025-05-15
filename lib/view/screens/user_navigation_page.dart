@@ -39,7 +39,7 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
           TasksScreen(),
           ExploreScreen(),
           ProfileScreen(),
-          SettingsScreen(),
+          SettingsPreferencesScreen(),
         ],
         items: [
           PersistentBottomNavBarItem(
