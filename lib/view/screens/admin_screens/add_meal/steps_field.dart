@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/utils/size_extensions.dart';
 
 class StepsField extends StatelessWidget {
   final TextEditingController stepsController;
@@ -16,8 +18,11 @@ class StepsField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('Steps / How To:'),
-        const SizedBox(height: 8),
+        const Text(
+          'Steps / How To:',
+          style: TextStyle(fontSize: 16, color: AppColors.textPrimary),
+        ),
+        SizedBox(height: context.hp(10)),
         TextFormField(
           keyboardType: TextInputType.multiline,
           controller: stepsController,

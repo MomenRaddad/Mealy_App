@@ -4,7 +4,9 @@ enum DurationType { less15min, min15to30, min30to60, more60min }
 
 enum CuisineType { italian, arabic, asian, american, indian, other }
 
-enum UnitType { grams, liters, pieces, cups, tablespoons, teaspoons }
+enum UnitType { g, ml, pcs, cups, Tbsp, Tsp }
+
+enum MealDifficulty { easy, medium, hard }
 
 extension DurationTypeLabel on DurationType {
   String get label {
@@ -37,8 +39,8 @@ class MealIngredient {
       name: map['name'] ?? '',
       quantity: map['quantity'] ?? '',
       unit: UnitType.values.firstWhere(
-        (e) => e.toString().split('.').last == (map['unit'] ?? 'grams'),
-        orElse: () => UnitType.grams,
+        (e) => e.toString().split('.').last == (map['unit'] ?? 'g'),
+        orElse: () => UnitType.g,
       ),
     );
   }
@@ -63,7 +65,7 @@ class MealModel {
   final List<MealIngredient> ingredients;
   final String steps;
   final double rating;
-
+  final MealDifficulty difficulty;
   MealModel({
     this.id,
     required this.name,
@@ -75,6 +77,7 @@ class MealModel {
     required this.ingredients,
     required this.steps,
     required this.rating,
+    required this.difficulty,
   });
 
   factory MealModel.fromMap(Map<String, dynamic> map, {String? id}) {
@@ -105,6 +108,10 @@ class MealModel {
               .toList(),
       steps: map['steps'] ?? '',
       rating: (map['rating'] ?? 0.0).toDouble(),
+      difficulty: MealDifficulty.values.firstWhere(
+        (e) => e.toString().split('.').last == (map['difficulty'] ?? 'easy'),
+        orElse: () => MealDifficulty.easy,
+      ),
     );
   }
 
@@ -119,6 +126,7 @@ class MealModel {
       'ingredients': ingredients.map((e) => e.toMap()).toList(),
       'steps': steps,
       'rating': rating,
+      'difficulty': difficulty.toString().split('.').last,
     };
   }
 }
