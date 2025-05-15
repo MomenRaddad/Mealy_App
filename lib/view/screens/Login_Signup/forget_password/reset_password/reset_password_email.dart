@@ -5,23 +5,35 @@ class ResetPasswordEmail extends StatefulWidget {
   const ResetPasswordEmail({super.key});
 
   @override
-  State<ResetPasswordEmail> createState() => _ResetPasswordEmail();
+  State<ResetPasswordEmail> createState() => _ResetPasswordEmailState();
 }
 
-class _ResetPasswordEmail extends State<ResetPasswordEmail> {
+class _ResetPasswordEmailState extends State<ResetPasswordEmail> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Column(
         children: [
-          ClipPath(
-            clipper: TopWaveClipper(),
-            child: Container(
-              color: Colors.green,
-              height: 200,
-              width: double.infinity,
-            ),
+          Stack(
+            children: [
+              ClipPath(
+                clipper: TopWaveClipper(),
+                child: Container(
+                  color: Colors.green,
+                  height: 200,
+                  width: double.infinity,
+                ),
+              ),
+              SafeArea(
+                child: IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+              ),
+            ],
           ),
           Expanded(
             child: Padding(
@@ -31,18 +43,20 @@ class _ResetPasswordEmail extends State<ResetPasswordEmail> {
                   const SizedBox(height: 10),
                   const Text(
                     'Reset Password',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 10),
-                  const Divider(thickness: 2, color: Colors.green, endIndent: 250),
+                  const Divider(
+                    thickness: 2,
+                    color: Colors.green,
+                    endIndent: 250,
+                  ),
                   const SizedBox(height: 30),
                   const Text('Email'),
                   const SizedBox(height: 8),
                   TextField(
-                    decoration: InputDecoration(
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: const InputDecoration(
                       hintText: 'NNU@email.com',
                       prefixIcon: Icon(Icons.email_outlined),
                       border: UnderlineInputBorder(),
@@ -60,7 +74,9 @@ class _ResetPasswordEmail extends State<ResetPasswordEmail> {
                       onPressed: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (context) => const ResetPasswordCode()),
+                          MaterialPageRoute(
+                            builder: (context) => const ResetPasswordCode(),
+                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -70,28 +86,6 @@ class _ResetPasswordEmail extends State<ResetPasswordEmail> {
                         ),
                       ),
                       child: const Text("Send Code"),
-                    ),
-                  ),
-
-                  const SizedBox(height: 20),
-
-                  SizedBox(
-                    width: double.infinity,
-                    height: 48,
-                    child: OutlinedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.green),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      child: const Text(
-                        "Back to Login",
-                        style: TextStyle(color: Colors.green),
-                      ),
                     ),
                   ),
 
