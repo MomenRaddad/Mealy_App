@@ -25,20 +25,16 @@ class AddMealScreen extends StatefulWidget {
 class _AddMealScreenState extends State<AddMealScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers
   final TextEditingController _mealNameController = TextEditingController();
   final TextEditingController _caloriesController = TextEditingController();
   final TextEditingController _stepsController = TextEditingController();
 
-  // Image
   File? _selectedImage;
 
-  // Dropdown Selections (enum-based)
   CuisineType selectedCuisine = CuisineType.italian;
   DurationType selectedDuration = DurationType.min30to60;
   DietaryType selectedDietType = DietaryType.regular;
   MealDifficulty selectedDifficulty = MealDifficulty.easy;
-  // Ingredients
   List<Map<String, String>> ingredients = [
     {'name': '', 'unit': 'g', 'quantity': ''},
   ];

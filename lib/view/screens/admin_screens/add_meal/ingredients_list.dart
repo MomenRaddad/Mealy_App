@@ -45,7 +45,6 @@ class _IngredientsListState extends State<IngredientsList> {
             padding: EdgeInsets.only(bottom: context.hp(15)),
             child: Row(
               children: [
-                // ✅ name field
                 Expanded(
                   child: TextFormField(
                     initialValue: ingredient['name'],
@@ -61,7 +60,6 @@ class _IngredientsListState extends State<IngredientsList> {
                 ),
                 SizedBox(width: context.wp(8)),
 
-                // ✅ quantity field
                 SizedBox(
                   width: context.wp(100),
                   child: TextFormField(
@@ -80,7 +78,6 @@ class _IngredientsListState extends State<IngredientsList> {
                 ),
                 SizedBox(width: context.wp(8)),
 
-                // ✅ unit dropdown
                 Expanded(
                   child: CustomDropdownField(
                     label: 'Unit',
