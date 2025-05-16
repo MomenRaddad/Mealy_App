@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:meal_app/core/colors.dart';
-import 'package:meal_app/utils/size_extensions.dart';
+import 'package:meal_app/core/routes.dart';
+import 'package:meal_app/view/screens/user_screens/home/reminders_screen.dart';
+import 'package:meal_app/view/screens/user_screens/profile/profile_screen.dart';
 
 class HeaderSection extends StatelessWidget {
   const HeaderSection({super.key});
@@ -10,55 +10,54 @@ class HeaderSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.grey,
-          child: ClipOval(
-            child: CachedNetworkImage(
-              imageUrl:
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const ProfileScreen()),
+            );
+          },
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 30,
+                backgroundColor: Colors.grey,
+                backgroundImage: const NetworkImage(
                   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3WVOAQ-lryrrplK2pFjnXHmkS_ZSa-VI_rA&s',
-              fit: BoxFit.cover,
-              width: context.wp(60),
-              height: context.wp(60),
-              placeholder: (context, url) => const CircularProgressIndicator(),
-              errorWidget: (context, url, error) => Icon(
-                Icons.person,
-                size: context.wp(24),
-                color: Colors.grey,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(width: context.wp(12)),
-        Text(
-          "Saif Khalifa",
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        const Spacer(),
-        Stack(
-          alignment: Alignment.topRight,
-          children: [
-            IconButton(
-              iconSize: context.wp(36),
-              color: AppColors.textPrimary,
-              icon: const Icon(Icons.notifications_none),
-              onPressed: () {},
-            ),
-            const Positioned(
-              right: 5,
-              top: 5,
-              child: CircleAvatar(
-                radius: 9,
-                backgroundColor: Colors.red,
-                child: Text(
-                  '9+',
-                  style: TextStyle(color: Colors.white, fontSize: 10),
                 ),
               ),
-            )
-          ],
+              const SizedBox(width: 12),
+              Text(
+                "Saif Khalifa", // replace with dynamic username later
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ],
+          ),
         ),
+        const Spacer(),
+        GestureDetector(
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const RemindersScreen()),
+            );
+          },
+          child: Stack(
+            alignment: Alignment.topRight,
+            children: [
+              Icon(Icons.notifications_none, size: 32, color: Theme.of(context).iconTheme.color),
+              const Positioned(
+                right: 2,
+                top: 2,
+                child: CircleAvatar(
+                  radius: 7,
+                  backgroundColor: Colors.red,
+                  child: Text('9+', style: TextStyle(color: Colors.white, fontSize: 10)),
+                ),
+              ),
+            ],
+          ),
+        )
       ],
     );
   }
+
 }
