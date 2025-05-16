@@ -1,154 +1,131 @@
 import 'package:flutter/material.dart';
+import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/view/components/search_bar.dart';
+import 'package:meal_app/view/screens/user_screens/home/date_selector.dart';
 import 'package:meal_app/view/screens/user_screens/home/goal_card.dart';
 import 'package:meal_app/view/screens/user_screens/home/header_section.dart';
 import 'package:meal_app/view/screens/user_screens/home/task_card.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
   @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  List<Map<String, dynamic>> taskList = [
+    {"title": "Go to church", "time": "8:00 AM", "isDone": true},
+    {"title": "Breakfast with friends", "time": "10:00 AM", "isDone": true},
+    {"title": "Meeting", "time": "12:00 PM", "isDone": false},
+  ];
+
+  void deleteTask(int index) {
+    setState(() {
+      taskList.removeAt(index);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    int completedTasks = taskList.where((task) => task['isDone'] == true).length;
+    int totalTasks = taskList.length;
+
     return Scaffold(
-      backgroundColor: Colors.white,
-      
-      
+      backgroundColor: AppColors.background,
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Header section
-              const HeaderSection(),
-              const SizedBox(height: 16),
-
-            // Search bar
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              decoration: BoxDecoration(
-                color: Colors.grey[200],
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: const TextField(
-                decoration: InputDecoration(
-                  icon: Icon(Icons.search),
-                  border: InputBorder.none,
-                  hintText: 'Search',
-                ),
-              ),
+            const HeaderSection(),
+           /*  const SizedBox(height: 16),
+            SearchBarWidget(
+              hintText: "Search for tasks...",
+              onChanged: (query) {},
             ),
+            */
+
             const SizedBox(height: 16),
-
-            // Date selector
-            SizedBox(
-              height: 80,
-              child: ListView.builder(
-                scrollDirection: Axis.horizontal,
-                itemCount: 7,
-                itemBuilder: (context, index) {
-                  final List<String> days = ['Thur', 'Fri', 'Sat', 'Sun', 'Mon', 'Tues', 'Wed'];
-                  final List<int> dates = [5, 6, 7, 8, 9, 10, 11];
-                  final bool isToday = index == 3;
-
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          backgroundColor: isToday ? Colors.green : Colors.black,
-                          child: Text(
-                            '${dates[index]}',
-                            style: const TextStyle(color: Colors.white),
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          days[index],
-                          style: TextStyle(
-                            fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
-                            color: isToday ? Colors.green : Colors.black,
-                          ),
-                        )
-                      ],
-                    ),
-                  );
-                },
-              ),
-            ),
-
+			
+            const DateSelector(),
             const SizedBox(height: 20),
-
-            // Placeholder for "Your Goals" section
+            
+             // Placeholder for "Your Goals" section
             const Text(
               'Your Goals',
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
             ),
 
             const SizedBox(height: 10),
             const SizedBox(height: 10),
 
-            GoalCard(
-              backgroundColor: Colors.green,
-              icon: Icons.directions_walk,
-              title: 'Walk',
-              progressText: '450 / 6000 Steps',
-              progressValue: 0.075,
+            Row(
+              children: const [
+                Expanded(
+                  child: GoalCard(
+                    backgroundColor: Colors.green,
+                    icon: Icons.directions_walk,
+                    title: 'Walk',
+                    currentValue: 420,
+                    goalValue: 6000,
+                    unit: 'Steps',
+                  ),
+                ),
+                SizedBox(width: 16),
+                Expanded(
+                  child: GoalCard(
+                    backgroundColor: AppColors.accent2,
+                    icon: Icons.opacity,
+                    title: 'Drink Water',
+                    currentValue: 2,
+                    goalValue: 5,
+                    unit: 'Cups',
+                  ),
+                ),
+              ],
             ),
-            GoalCard(
-              backgroundColor: Colors.amber,
-              icon: Icons.opacity,
-              title: 'Drink Water',
-              progressText: '2 / 5 Cups',
-              progressValue: 0.4,
-            ),
-            GoalCard(
-              backgroundColor: Colors.deepOrange,
+            const SizedBox(height: 16),
+            const GoalCard(
+              backgroundColor: AppColors.accent1,
               icon: Icons.nightlight_round,
               title: 'Sleep',
-              progressText: '6 / 8 Hours',
-              progressValue: 0.75,
+              currentValue: 6,
+              goalValue: 8,
+              unit: 'Hours',
             ),
 
-            // Placeholder for "Upcoming tasks" section
             const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 const Text(
                   'Upcoming Tasks',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                 ),
-                ElevatedButton.icon(
-                  onPressed: null, // TODO: add task action
-                  icon: Icon(Icons.add),
-                  label: Text('New Task'),
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-                ),
+                Text(
+                  "$completedTasks / $totalTasks Tasks Completed",
+                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
+                ),               
               ],
             ),
             const SizedBox(height: 10),
 
-            // Example tasks
-            TaskCard(
-              time: '8:00 AM',
-              title: 'Go to church',
-              isDone: true,
-            ),
-            TaskCard(
-              time: '10:00 AM',
-              title: 'Breakfast with friends',
-              isDone: true,
-            ),
-            TaskCard(
-              time: '12:00 PM',
-              title: 'Meeting',
-              isDone: false,
-            ),
-
+            // Task List from state
+            Column(
+              children: List.generate(taskList.length, (index) {
+                final task = taskList[index];
+                return TaskCard(
+                  time: task['time'],
+                  title: task['title'],
+                  isDone: task['isDone'],
+                  onDelete: () => deleteTask(index),
+                );
+              }),
+            )
           ],
         ),
       ),
-
-      
     );
   }
 }
