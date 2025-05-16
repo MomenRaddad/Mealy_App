@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meal_app/utils/size_extensions.dart';
 import 'package:meal_app/view/screens/user_screens/home/dialogs/edit_goal_dialog.dart';
 import '../../../../core/colors.dart';
 
@@ -70,7 +71,7 @@ class _GoalCardState extends State<GoalCard> {
             Row(
               children: [
                 Icon(widget.icon, color: AppColors.textPrimary, size: 24),
-                const SizedBox(width: 8),
+                SizedBox(width: context.wp(8)),
                 Text(
                   widget.title,
                   style: const TextStyle(
@@ -81,7 +82,7 @@ class _GoalCardState extends State<GoalCard> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: context.hp(12)),
 
             // Progress Text ABOVE the Progress Bar
             Column(
@@ -95,7 +96,7 @@ class _GoalCardState extends State<GoalCard> {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                const SizedBox(height: 4),
+                SizedBox(height: context.hp(4)),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(10),
                   child: LinearProgressIndicator(
@@ -107,7 +108,7 @@ class _GoalCardState extends State<GoalCard> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            SizedBox(height: context.hp(12)),
 
             // Buttons
             Row(

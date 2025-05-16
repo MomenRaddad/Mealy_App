@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/core/routes.dart';
+import 'package:meal_app/utils/navigation_utils.dart';
+import 'package:meal_app/utils/size_extensions.dart';
 import 'package:meal_app/view/screens/user_screens/home/reminders_screen.dart';
 import 'package:meal_app/view/screens/user_screens/profile/profile_screen.dart';
 
@@ -12,9 +14,9 @@ class HeaderSection extends StatelessWidget {
       children: [
         GestureDetector(
           onTap: () {
-            Navigator.of(context).push(
+            /* Navigator.of(context).push(
               MaterialPageRoute(builder: (_) => const ProfileScreen()),
-            );
+            ); */
           },
           child: Row(
             children: [
@@ -25,7 +27,7 @@ class HeaderSection extends StatelessWidget {
                   'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ3WVOAQ-lryrrplK2pFjnXHmkS_ZSa-VI_rA&s',
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: context.wp(10)),
               Text(
                 "Saif Khalifa", // replace with dynamic username later
                 style: Theme.of(context).textTheme.headlineSmall,
@@ -36,14 +38,16 @@ class HeaderSection extends StatelessWidget {
         const Spacer(),
         GestureDetector(
           onTap: () {
-            Navigator.of(context).push(
+            //AppNavigator.pushWithoutNavBar(context, RemindersScreen());
+            //AppNavigator.pushWithFade(context, const RemindersScreen());
+            /* Navigator.of(context, rootNavigator: true).push(
               MaterialPageRoute(builder: (_) => const RemindersScreen()),
-            );
+            ); */
           },
           child: Stack(
             alignment: Alignment.topRight,
             children: [
-              Icon(Icons.notifications_none, size: 32, color: Theme.of(context).iconTheme.color),
+              Icon(Icons.notifications_none, size: context.hp(32), color: Theme.of(context).iconTheme.color),
               const Positioned(
                 right: 2,
                 top: 2,

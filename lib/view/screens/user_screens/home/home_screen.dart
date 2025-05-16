@@ -1,5 +1,10 @@
+/*
+ * TODO: Refactor the page to use ChangeNotifier.
+ */
+
 import 'package:flutter/material.dart';
 import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/utils/size_extensions.dart';
 import 'package:meal_app/view/components/search_bar.dart';
 import 'package:meal_app/view/screens/user_screens/home/date_selector.dart';
 import 'package:meal_app/view/screens/user_screens/home/goal_card.dart';
@@ -46,10 +51,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             */
 
-            const SizedBox(height: 16),
+            SizedBox(height: context.hp(16)),
 			
             const DateSelector(),
-            const SizedBox(height: 20),
+            SizedBox(height: context.hp(20)),
             
              // Placeholder for "Your Goals" section
             const Text(
@@ -57,8 +62,8 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
             ),
 
-            const SizedBox(height: 10),
-            const SizedBox(height: 10),
+            SizedBox(height: context.hp(10)),
+            SizedBox(height: context.hp(10)),
 
             Row(
               children: const [
@@ -85,7 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: context.hp(16)),
             const GoalCard(
               backgroundColor: AppColors.accent1,
               icon: Icons.nightlight_round,
@@ -95,7 +100,7 @@ class _HomeScreenState extends State<HomeScreen> {
               unit: 'Hours',
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: context.hp(20)),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -109,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),               
               ],
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: context.hp(10)),
 
             // Task List from state
             Column(
