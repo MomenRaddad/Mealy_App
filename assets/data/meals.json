@@ -1,0 +1,63 @@
+[
+  {
+    "title": "Spaghetti Bolognese",
+    "image": "https://intelligentfoods.ae/cdn/shop/files/spaghetti-with-tomato-sauce_1200x800_36b7c849-e33f-4b64-ad1c-660a67c2a1bc.jpg?v=1716215120",
+    "difficulty": "Easy",
+    "duration": "20 mins",
+    "ingredients": [
+      "200g spaghetti",
+      "1 onion, chopped",
+      "2 garlic cloves, minced",
+      "400g ground beef",
+      "1 can of tomato sauce",
+      "Salt and pepper"
+    ],
+    "steps": [
+      "Boil the spaghetti according to package instructions.",
+      "In a pan, sauté onion and garlic until soft.",
+      "Add ground beef and cook until browned.",
+      "Pour in tomato sauce and simmer for 10 minutes.",
+      "Season with salt and pepper.",
+      "Serve sauce over spaghetti."
+    ]
+  },
+  {
+    "title": "Vegan Salad",
+    "image": "https://images.immediate.co.uk/production/volatile/sites/30/2014/05/Epic-summer-salad-hub-2646e6e.jpg",
+    "difficulty": "Simple",
+    "duration": "10 mins",
+    "ingredients": [
+      "Mixed lettuce leaves",
+      "Cherry tomatoes",
+      "Cucumber slices",
+      "Olives",
+      "Avocado",
+      "Lemon juice and olive oil"
+    ],
+    "steps": [
+      "Wash and chop vegetables.",
+      "Place all ingredients in a bowl.",
+      "Drizzle with lemon juice and olive oil.",
+      "Toss well and serve immediately."
+    ]
+  },
+  {
+    "title": "Hold On Juice",
+    "image": "https://scontent.fjrs25-1.fna.fbcdn.net/v/t1.6435-9/108100038_4405599699458083_3764562822679652764_n.jpg?...",
+    "difficulty": "Simple",
+    "duration": "10 mins",
+    "ingredients": [
+      "1 apple",
+      "1 carrot",
+      "1 beetroot",
+      "Half lemon juice",
+      "1 cup water"
+    ],
+    "steps": [
+      "Wash and chop all ingredients.",
+      "Add to blender with water.",
+      "Blend until smooth.",
+      "Strain if desired and serve chilled."
+    ]
+  }
+]
