@@ -4,7 +4,7 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import '../../core/colors.dart';
 import 'user_screens/home/home_screen.dart';
 import 'user_screens/tasks/tasks_screen.dart';
-import 'user_screens/meals/meals_screen.dart';
+import 'user_screens/meals/explore_screen.dart';
 import 'user_screens/profile/profile_screen.dart';
 import 'user_screens/settings/settings_screen.dart';
 
@@ -37,7 +37,7 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
         screens: [
           HomeScreen(),
           TasksScreen(),
-          MealsScreen(),
+          ExploreScreen(),
           ProfileScreen(),
           SettingsScreen(),
         ],
