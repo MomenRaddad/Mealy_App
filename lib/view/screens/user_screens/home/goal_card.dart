@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:meal_app/view/screens/user_screens/home/dialogs/edit_goal_dialog.dart';
 import '../../../../core/colors.dart';
 
 class GoalCard extends StatefulWidget {
@@ -50,9 +51,10 @@ class _GoalCardState extends State<GoalCard> {
 
     return GestureDetector(
       onTap: () {
-        // TODO: Show popup to edit goal
-        // Example: showDialog(context: context, builder: (_) => GoalEditDialog(goal: widget.title));
-        print("goal card tapped");
+        showDialog(
+          context: context,
+          builder: (_) => EditGoalDialog(goalTitle: widget.title),
+        );
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
