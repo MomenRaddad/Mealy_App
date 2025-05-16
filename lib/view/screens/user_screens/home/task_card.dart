@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:meal_app/view/screens/user_screens/home/dialogs/confirm_delete_dialog.dart';
+import 'package:meal_app/view/screens/user_screens/home/dialogs/edit_task_dialog.dart';
 
 class TaskCard extends StatelessWidget {
   final String time;
@@ -38,11 +40,23 @@ class TaskCard extends StatelessWidget {
           children: [
             IconButton(
               icon: const Icon(Icons.edit, color: Colors.green),
-              onPressed: onEdit,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => EditTaskDialog(taskTitle: title),
+                );
+              },
             ),
             IconButton(
               icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: onDelete,
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (_) => ConfirmDeleteDialog(onConfirm: () {
+                    if (onDelete != null) onDelete!();
+                  }),
+                );
+              },
             ),
           ],
         ),
