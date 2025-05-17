@@ -2,10 +2,11 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/utils/network_utils.dart';
 import 'package:meal_app/utils/size_extensions.dart';
 import 'package:provider/provider.dart';
 
-import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/viewmodels/add_meal_viewmodel.dart';
 import 'package:meal_app/models/meal_model.dart';
 
@@ -116,6 +117,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
         builder: (context, mealViewModel, _) {
           return SafeArea(
             child: Scaffold(
+              backgroundColor: AppColors.background,
               appBar: AppBar(
                 title: const Text('Meal Management'),
                 leading: IconButton(
@@ -125,10 +127,17 @@ class _AddMealScreenState extends State<AddMealScreen> {
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.save),
-                    onPressed:
-                        mealViewModel.isLoading
-                            ? null
-                            : () => _handleSave(mealViewModel),
+                    onPressed: () async {
+                      final isConnected =
+                          await NetworkUtils.checkInternetAndShowDialog(
+                            context,
+                          );
+                      if (!isConnected) return;
+
+                      if (!mealViewModel.isLoading) {
+                        _handleSave(mealViewModel);
+                      }
+                    },
                   ),
                 ],
               ),
