@@ -6,15 +6,16 @@ class ExploreViewModel extends ChangeNotifier {
 
   Future<void> loadMeals() async {
     try {
-      final snapshot = await FirebaseFirestore.instance.collection('meals').get();
+      final snapshot = await FirebaseFirestore.instance.collection('mealsList').get();
 
       meals = snapshot.docs.map((doc) {
         final data = doc.data();
+
         return {
           'id': doc.id,
-          'title': data['name'] ?? 'Untitled Meal',
-          'image': data['image'] ?? '', // عدّل حسب وجود الصورة
-          'difficulty': data['dietaryType'] ?? 'Unknown',
+          'title': data['title'] ?? 'Untitled Meal',
+          'image': data['image'] ?? '',
+          'difficulty': data['difficulty'] ?? 'Unknown',
           'duration': data['duration'] ?? '',
           'ingredients': data['ingredients'] ?? [],
           'steps': data['steps'] ?? [],

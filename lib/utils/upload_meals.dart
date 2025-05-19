@@ -4,17 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 Future<void> uploadJsonToFirestore() async {
   try {
-    final String response = await rootBundle.loadString('assets/data/meals.json');
-    final List<dynamic> data = json.decode(response);
+    final jsonString = await rootBundle.loadString('assets/data/meals.json');
+    final List<dynamic> jsonList = json.decode(jsonString);
 
-    final mealsRef = FirebaseFirestore.instance.collection('mealsList');
-
-    for (var meal in data) {
-      await mealsRef.add(meal);
+    for (final meal in jsonList) {
+      await FirebaseFirestore.instance.collection('mealsList').add(meal);
     }
 
-    print("✅ All meals uploaded to Firestore in 'mealsList'");
+    print("✅ Meals uploaded successfully!");
   } catch (e) {
-    print("❌ Error uploading JSON to Firestore: $e");
+    print("❌ Error uploading meals: $e");
   }
 }

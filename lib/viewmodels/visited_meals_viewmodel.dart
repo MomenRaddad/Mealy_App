@@ -1,14 +1,26 @@
 import 'package:flutter/material.dart';
-import '../../models/visited_meal_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:meal_app/models/visited_meal_model.dart';
 
 class VisitedMealsViewModel extends ChangeNotifier {
-  final List<VisitedMeal> _visitedMeals = [];
+  List<VisitedMeal> visitedMeals = [];
 
-  List<VisitedMeal> get visitedMeals => _visitedMeals;
+  Future<void> fetchVisitedMeals() async {
+    final snapshot = await FirebaseFirestore.instance
+        .collection('visitedMeals')
+        .orderBy('visitedAt', descending: true)
+        .get();
 
-  void addMeal(VisitedMeal meal) {
-    if (_visitedMeals.any((m) => m.id == meal.id)) return;
-    _visitedMeals.insert(0, meal); 
+    visitedMeals = snapshot.docs.map((doc) {
+      final data = doc.data();
+      return VisitedMeal(
+        id: data['mealId'],
+        title: data['title'],
+        image: data['image'],
+        visitedAt: (data['visitedAt'] as Timestamp).toDate(),
+      );
+    }).toList();
+
     notifyListeners();
   }
 }

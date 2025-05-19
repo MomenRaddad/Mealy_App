@@ -6,6 +6,7 @@ import 'package:meal_app/view/components/loading_widget.dart';
 import 'package:meal_app/view/components/empty_state_widget.dart';
 import 'package:meal_app/view/screens/user_screens/meals/explore_widgets/meal_card.dart';
 import 'package:meal_app/core/routes.dart';
+import 'package:meal_app/utils/upload_meals.dart';
 import 'package:meal_app/core/strings.dart';
 import 'package:meal_app/view/screens/user_screens/meals/explore_viewmodel.dart';
 import 'package:meal_app/view/screens/user_screens/details/meal_details_screen.dart';

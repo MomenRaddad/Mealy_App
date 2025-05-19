@@ -15,6 +15,14 @@ class _HistorySummaryScreenState extends State<HistorySummaryScreen> {
   final Set<String> favoriteIds = {};
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<VisitedMealsViewModel>(context, listen: false).fetchVisitedMeals();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final visitedMeals = Provider.of<VisitedMealsViewModel>(context).visitedMeals;
 
