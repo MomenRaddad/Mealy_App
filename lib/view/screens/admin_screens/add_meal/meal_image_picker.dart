@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/utils/size_extensions.dart';
 
 class MealImagePicker extends StatelessWidget {
   final File? selectedImage;
@@ -62,7 +63,7 @@ class MealImagePicker extends StatelessWidget {
                       fontSize: 14,
                     ),
                   ),
-                  SizedBox(width: 4),
+                  SizedBox(width: context.wp(4)),
                   Icon(Icons.edit, color: AppColors.textPrimary, size: 16),
                 ],
               ),

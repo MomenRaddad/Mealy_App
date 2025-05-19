@@ -57,6 +57,7 @@ class AddMealViewModel extends ChangeNotifier {
     required List<Map<String, String>> ingredients,
     required String steps,
     File? imageFile,
+    required String difficulty,
   }) async {
     print('addMeal called');
     isLoading = true;
@@ -85,6 +86,7 @@ class AddMealViewModel extends ChangeNotifier {
         'ingredients': ingredients,
         'steps': steps,
         'photoUrl': photoUrl,
+        'difficulty': difficulty,
         'createdAt': FieldValue.serverTimestamp(),
       });
       print('Meal added to Firestore successfully');

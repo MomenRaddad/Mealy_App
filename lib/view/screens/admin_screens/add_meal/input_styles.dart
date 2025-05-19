@@ -22,15 +22,15 @@ class InputStyles {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.green, width: 2),
+        borderSide: const BorderSide(color: AppColors.success, width: 2),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.red, width: 2),
+        borderSide: const BorderSide(color: AppColors.error, width: 2),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: const BorderSide(color: Colors.red, width: 2),
+        borderSide: const BorderSide(color: AppColors.error, width: 2),
       ),
       suffixIcon: suffixIcon,
     );
