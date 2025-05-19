@@ -1,54 +1,38 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:meal_app/utils/navigation_utils.dart';
+import 'package:provider/provider.dart';
 import 'package:meal_app/view/components/search_bar.dart';
 import 'package:meal_app/view/components/filter_chip_list.dart';
-import 'package:meal_app/view/components/section_title.dart';
 import 'package:meal_app/view/components/loading_widget.dart';
 import 'package:meal_app/view/components/empty_state_widget.dart';
-import 'package:meal_app/view/components/custom_button.dart';
-import 'package:meal_app/view/components/pill_label.dart';
-import 'package:meal_app/core/strings.dart';
 import 'package:meal_app/view/screens/user_screens/meals/explore_widgets/meal_card.dart';
 import 'package:meal_app/core/routes.dart';
+import 'package:meal_app/core/strings.dart';
+import 'package:meal_app/view/screens/user_screens/meals/explore_viewmodel.dart';
+import 'package:meal_app/view/screens/user_screens/details/meal_details_screen.dart';
 
 class ExploreScreen extends StatefulWidget {
-  const ExploreScreen({Key? key}) : super(key: key);
+  const ExploreScreen({super.key});
 
   @override
   State<ExploreScreen> createState() => _ExploreScreenState();
 }
 
 class _ExploreScreenState extends State<ExploreScreen> {
-  List<String> filters = ["All", "Easy", "Simple", "Difficult" , "Saif" , "Spicy" , "Amai"];
+  final List<String> filters = ["All", "Easy", "Simple", "Difficult", "Saif", "Spicy", "Amai"];
   String selectedFilter = "All";
   String searchQuery = "";
-
-  List<Map<String, dynamic>> meals = [];
 
   @override
   void initState() {
     super.initState();
-    _loadMeals();
+    Provider.of<ExploreViewModel>(context, listen: false).loadMeals();
   }
-
-Future<void> _loadMeals() async {
-  try {
-    final String response = await rootBundle.loadString('assets/data/meals.json');
-    final List<dynamic> data = json.decode(response);
-    setState(() {
-      meals = data.cast<Map<String, dynamic>>();
-    });
-  } catch (e) {
-    debugPrint(" Error loading meals.json: $e");
- 
-  }
-}
-
 
   @override
   Widget build(BuildContext context) {
+    final viewModel = Provider.of<ExploreViewModel>(context);
+    final meals = viewModel.meals;
+
     List<Map<String, dynamic>> filteredMeals = meals.where((meal) {
       final matchesSearch = meal['title'].toString().toLowerCase().contains(searchQuery.toLowerCase());
       final matchesFilter = selectedFilter == "All" || meal['difficulty'] == selectedFilter;
@@ -56,9 +40,7 @@ Future<void> _loadMeals() async {
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(AppStrings.exploreMealsTitle),
-      ),
+      appBar: AppBar(title: Text(AppStrings.exploreMealsTitle)),
       body: meals.isEmpty
           ? const Center(child: LoadingWidget(message: "Loading meals..."))
           : Column(
@@ -67,21 +49,13 @@ Future<void> _loadMeals() async {
                 const SizedBox(height: 10),
                 SearchBarWidget(
                   hintText: "Search meals...",
-                  onChanged: (query) {
-                    setState(() {
-                      searchQuery = query;
-                    });
-                  },
+                  onChanged: (query) => setState(() => searchQuery = query),
                 ),
                 const SizedBox(height: 10),
                 FilterChipList(
                   filters: filters,
                   initiallySelected: selectedFilter,
-                  onSelected: (filter) {
-                    setState(() {
-                      selectedFilter = filter;
-                    });
-                  },
+                  onSelected: (filter) => setState(() => selectedFilter = filter),
                 ),
                 const SizedBox(height: 10),
                 Expanded(
@@ -100,14 +74,14 @@ Future<void> _loadMeals() async {
                               imageUrl: meal['image'],
                               difficulty: meal['difficulty'],
                               duration: meal['duration'],
-                           onTap: () {
-                              Navigator.pushNamed(
-                                 context,
-                            AppRoutes.mealDetails, 
-                             arguments: meal,
-                                     );
-                                       },
-
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => MealDetailsScreen(mealId: meal['id']),
+                                  ),
+                                );
+                              },
                             );
                           },
                         ),
