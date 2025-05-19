@@ -31,21 +31,6 @@ class FavoritesHeader extends StatelessWidget {
           thickness: 1,
           color: Colors.grey,
         ),
-        Padding(
-          padding: const EdgeInsets.only(right: 30),
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: DropdownButton<String>(
-              hint: const Text('Sort'),
-              items: const [
-                DropdownMenuItem(value: 'A-Z', child: Text('A-Z')),
-                DropdownMenuItem(value: 'Z-A', child: Text('Z-A')),
-                DropdownMenuItem(value: 'Date: Recent', child: Text('Recent')),
-              ],
-              onChanged: (value) {},
-            ),
-          ),
-        ),
       ],
     );
   }
