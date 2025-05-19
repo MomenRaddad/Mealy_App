@@ -7,6 +7,7 @@ import 'core/routes.dart';
 import 'provider/theme_provider.dart';
 import 'package:meal_app/view/screens/user_screens/meals/explore_viewmodel.dart';
 import 'package:meal_app/view/screens/user_screens/details/meal_details_viewmodel.dart';
+import 'package:meal_app/viewmodels/visited_meals_viewmodel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,7 +18,11 @@ void main() async {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => ExploreViewModel()), 
-            ChangeNotifierProvider(create: (_) => MealDetailsViewModel()), // ✅ هذا المهم
+         ChangeNotifierProvider(create: (_) => MealDetailsViewModel()),
+         ChangeNotifierProvider(create: (_) => VisitedMealsViewModel()),
+
+
+              
 
       ],
       child: const MyApp(),

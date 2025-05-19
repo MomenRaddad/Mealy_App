@@ -4,6 +4,9 @@ import 'package:meal_app/view/screens/user_screens/details/meal_details_viewmode
 import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/core/constants.dart';
 import 'package:meal_app/view/components/pill_label.dart';
+import 'package:meal_app/view/screens/user_screens/details/meal_details_viewmodel.dart';
+import 'package:meal_app/viewmodels/visited_meals_viewmodel.dart';
+import 'package:meal_app/models/visited_meal_model.dart';
 
 class MealDetailsScreen extends StatefulWidget {
   final String mealId;
@@ -17,12 +20,26 @@ class MealDetailsScreen extends StatefulWidget {
 class _MealDetailsScreenState extends State<MealDetailsScreen> {
   bool isFavorite = false;
 
-  @override
-  void initState() {
-    super.initState();
-    Provider.of<MealDetailsViewModel>(context, listen: false)
-        .loadMealById(widget.mealId);
-  }
+@override
+void initState() {
+  super.initState();
+  Provider.of<MealDetailsViewModel>(context, listen: false)
+      .loadMealById(widget.mealId)
+      .then((_) {
+    final meal = Provider.of<MealDetailsViewModel>(context, listen: false).meal;
+
+    if (meal != null) {
+      Provider.of<VisitedMealsViewModel>(context, listen: false).addMeal(
+        VisitedMeal(
+          id: widget.mealId,
+          title: meal['name'] ?? 'Unknown',
+          image: meal['image'] ?? '',
+          visitedAt: DateTime.now(),
+        ),
+      );
+    }
+  });
+}
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +52,6 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
       );
     }
 
-    // ✅ Safe null-handling
     final String image = meal['image'] as String? ?? '';
     final String title = meal['name'] as String? ?? 'Untitled Meal';
     final String duration = meal['duration'] as String? ?? 'Unknown';
@@ -46,7 +62,6 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     return Scaffold(
       body: Stack(
         children: [
-          // ✅ Background image or placeholder
           Hero(
             tag: title,
             child: image.isNotEmpty
@@ -61,7 +76,6 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                 : const Placeholder(fallbackHeight: 200),
           ),
 
-          // ✅ Scrollable content
           SingleChildScrollView(
             padding: EdgeInsets.only(
               top: MediaQuery.of(context).size.height * 0.45,
@@ -76,7 +90,6 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ✅ Title and Favorite icon
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -100,14 +113,12 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                         ),
                         onPressed: () {
                           setState(() => isFavorite = !isFavorite);
-                          // TODO: add logic for saving to favorites
                         },
                       ),
                     ],
                   ),
                   const SizedBox(height: 8),
 
-                  // ✅ Info labels
                   Row(
                     children: [
                       PillLabel(text: difficulty),
@@ -120,7 +131,6 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // ✅ Ingredients section
                   const Text(
                     "Ingredients",
                     style: TextStyle(
@@ -143,7 +153,6 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
 
                   const SizedBox(height: 24),
 
-                  // ✅ Steps section
                   const Text(
                     "Method of Preparation",
                     style: TextStyle(
@@ -166,7 +175,6 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
             ),
           ),
 
-          // ✅ Back button
           Positioned(
             top: 40,
             left: 20,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meal_app/provider/theme_provider.dart';
+import 'package:meal_app/view/screens/user_screens/history/history_summary_screen.dart';
 
 class SettingsPreferencesScreen extends StatefulWidget {
   const SettingsPreferencesScreen({super.key});
@@ -55,6 +56,13 @@ class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
     );
   }
 
+  void _openHistoryScreen() {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const HistorySummaryScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -67,7 +75,6 @@ class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          
           SwitchListTile(
             title: const Text("Dark Mode"),
             secondary: const Icon(Icons.dark_mode),
@@ -75,7 +82,6 @@ class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
             onChanged: (val) => themeProvider.toggleTheme(val),
           ),
 
-          
           ListTile(
             leading: const Icon(Icons.language),
             title: const Text("Language"),
@@ -89,7 +95,6 @@ class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
             ),
           ),
 
-        
           SwitchListTile(
             title: const Text("Reminders"),
             secondary: const Icon(Icons.notifications_active),
@@ -99,6 +104,13 @@ class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
 
           const Divider(height: 30),
 
+          ListTile(
+            leading: const Icon(Icons.history),
+            title: const Text("Meal Visit History"),
+            onTap: _openHistoryScreen,
+          ),
+
+          const Divider(height: 30),
 
           const Text("Custom Task Categories", style: TextStyle(fontWeight: FontWeight.bold)),
           const SizedBox(height: 8),
@@ -122,7 +134,6 @@ class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
             onTap: _clearCache,
           ),
 
-        
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.redAccent),
             title: const Text("Logout", style: TextStyle(color: Colors.redAccent)),
