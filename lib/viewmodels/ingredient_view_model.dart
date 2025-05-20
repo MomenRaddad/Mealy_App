@@ -72,4 +72,16 @@ class IngredientViewModel extends ChangeNotifier {
     if (index != -1) _ingredients[index] = updated;
     _applyFilters();
   }
+
+  Future<void> deleteIngredient(String id) async {
+  try {
+    await _firestore.collection('ingredients').doc(id).delete();
+    _ingredients.removeWhere((i) => i.id == id);
+    _applyFilters();
+    debugPrint("Ingredient $id deleted.");
+  } catch (e) {
+    debugPrint("Failed to delete ingredient $id: $e");
+  }
+}
+
 }
