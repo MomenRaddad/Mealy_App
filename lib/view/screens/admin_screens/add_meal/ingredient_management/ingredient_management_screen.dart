@@ -6,13 +6,29 @@ import 'package:meal_app/viewmodels/ingredient_view_model.dart';
 import 'package:provider/provider.dart';
 
 class IngredientManagementScreen extends StatelessWidget {
-  final bool isPickerMode;
-
+  final bool isPickerMode;  
+      
   const IngredientManagementScreen({super.key, this.isPickerMode = false});
 
   void _showAddDialog(BuildContext context, {Ingredient? ingredient}) {
     final nameController = TextEditingController(text: ingredient?.name);
     final categoryController = TextEditingController(text: ingredient?.category);
+
+    final List<String> validCategories = [
+      'Vegetable',
+      'Meat',
+      'Spice',
+      'Dairy',
+      'Other',
+    ];
+
+    final isEditing = ingredient != null;
+    final incomingCategory = categoryController.text;
+    final isInvalidCategory =
+        isEditing && !validCategories.contains(incomingCategory);
+
+    final String initialCategory =
+        isInvalidCategory ? 'Other' : incomingCategory;
 
     showDialog(
       context: context,
@@ -26,11 +42,31 @@ class IngredientManagementScreen extends StatelessWidget {
                 controller: nameController,
                 decoration: const InputDecoration(labelText: 'Name'),
               ),
-              const SizedBox(height: 16), // 🆙 spacing
-              TextField(
-                controller: categoryController,
+              const SizedBox(height: 16),
+              if (isInvalidCategory)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    "⚠️ Category '$incomingCategory' is invalid and has been reset to 'Other'.",
+                    style: const TextStyle(
+                      color: Colors.redAccent,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              DropdownButtonFormField<String>(
+                value: initialCategory.isEmpty ? null : initialCategory,
                 decoration: const InputDecoration(labelText: 'Category'),
-              ),
+                items: validCategories.map((cat) {
+                  return DropdownMenuItem(value: cat, child: Text(cat));
+                }).toList(),
+                onChanged: (value) {
+                  if (value != null) {
+                    categoryController.text = value;
+                  }
+                },
+              )
             ],
           ),
         ),
@@ -60,8 +96,8 @@ class IngredientManagementScreen extends StatelessWidget {
         ],
       ),
     );
-
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -125,12 +161,15 @@ class IngredientManagementScreen extends StatelessWidget {
                         ),
                         const Divider(),
                         ...items.map((ing) => IngredientTile(
-                              ingredient: ing,
-                              onTap: isPickerMode
-                                  ? () => Navigator.pop(context, ing.name)
-                                  : () {},
-                              onEdit: () => _showAddDialog(context, ingredient: ing),
-                            )),
+                          ingredient: ing,
+                          onTap: isPickerMode
+                              ? () => Navigator.pop(context, ing.name)
+                              : () {},
+                          onEdit: () => _showAddDialog(context, ingredient: ing),
+                          onDelete: () => context.read<IngredientViewModel>().deleteIngredient(ing.id),
+                        )),
+                        const Divider(),
+
                       ],
                     );
                   }).toList(),
