@@ -1,15 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:meal_app/models/meal_model.dart';
+import 'package:provider/provider.dart';
 import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/utils/network_utils.dart';
 import 'package:meal_app/utils/size_extensions.dart';
-import 'package:provider/provider.dart';
-
 import 'package:meal_app/viewmodels/add_meal_viewmodel.dart';
-import 'package:meal_app/models/meal_model.dart';
-
 import 'meal_image_picker.dart';
 import 'meal_info_fields.dart';
 import 'ingredients_list.dart';
@@ -25,13 +22,11 @@ class AddMealScreen extends StatefulWidget {
 
 class _AddMealScreenState extends State<AddMealScreen> {
   final _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _mealNameController = TextEditingController();
-  final TextEditingController _caloriesController = TextEditingController();
-  final TextEditingController _stepsController = TextEditingController();
+  final _mealNameController = TextEditingController();
+  final _caloriesController = TextEditingController();
+  final _stepsController = TextEditingController();
 
   File? _selectedImage;
-
   CuisineType selectedCuisine = CuisineType.italian;
   DurationType selectedDuration = DurationType.min30to60;
   DietaryType selectedDietType = DietaryType.regular;
@@ -50,9 +45,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
   }
 
   void _addIngredient() {
-    setState(() {
-      ingredients.add({'name': '', 'unit': 'g', 'quantity': '1'});
-    });
+    setState(() => ingredients.add({'name': '', 'unit': 'g', 'quantity': '1'}));
   }
 
   void _removeIngredient(int index) {
@@ -65,14 +58,13 @@ class _AddMealScreenState extends State<AddMealScreen> {
     setState(() => ingredients.removeAt(index));
   }
 
-  Future<void> _handleSave(AddMealViewModel mealViewModel) async {
+  Future<void> _handleSave(AddMealViewModel viewModel) async {
     if (!(_formKey.currentState?.validate() ?? false)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all required fields')),
       );
       return;
     }
-    print(ingredients);
 
     bool ingredientsValid = ingredients.every(
       (ing) =>
@@ -88,7 +80,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
       return;
     }
 
-    await mealViewModel.addMeal(
+    await viewModel.addMeal(
       name: _mealNameController.text,
       cuisine: selectedCuisine.toString().split('.').last,
       duration: selectedDuration.toString().split('.').last,
@@ -96,16 +88,16 @@ class _AddMealScreenState extends State<AddMealScreen> {
       dietaryType: selectedDietType.toString().split('.').last,
       ingredients: ingredients,
       steps: _stepsController.text,
-      imageFile: _selectedImage, // Null is okay, widget handles default image
+      imageFile: _selectedImage,
       difficulty: selectedDifficulty.toString().split('.').last,
     );
 
-    if (mealViewModel.errorMessage == null) {
+    if (viewModel.errorMessage == null) {
       Navigator.of(context).pop();
     } else {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(SnackBar(content: Text(mealViewModel.errorMessage!)));
+      ).showSnackBar(SnackBar(content: Text(viewModel.errorMessage!)));
     }
   }
 
@@ -114,92 +106,86 @@ class _AddMealScreenState extends State<AddMealScreen> {
     return ChangeNotifierProvider(
       create: (_) => AddMealViewModel(),
       child: Consumer<AddMealViewModel>(
-        builder: (context, mealViewModel, _) {
-          return SafeArea(
-            child: Scaffold(
-              backgroundColor: AppColors.background,
-              appBar: AppBar(
-                title: const Text('Meal Management'),
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.save),
-                    onPressed: () async {
-                      final isConnected =
-                          await NetworkUtils.checkInternetAndShowDialog(
-                            context,
-                          );
-                      if (!isConnected) return;
-
-                      if (!mealViewModel.isLoading) {
-                        _handleSave(mealViewModel);
-                      }
-                    },
-                  ),
-                ],
+        builder: (context, viewModel, _) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: AppBar(
+              title: const Text('Add Meal'),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pop(),
               ),
-              body: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      MealImagePicker(
-                        selectedImage: _selectedImage,
-                        onPickImage: _pickImage,
-                        defaultAsset: 'assets/images/default_meal.jpg',
-                      ),
-                      const SizedBox(height: 20),
-                      MealInfoFields(
-                        mealNameController: _mealNameController,
-                        caloriesController: _caloriesController,
-                        selectedCuisine: selectedCuisine,
-                        selectedDuration: selectedDuration,
-                        selectedDietType: selectedDietType,
-                        selectedDifficulty: selectedDifficulty,
-                        onDifficultyChanged:
-                            (val) => setState(() => selectedDifficulty = val),
-                        onCuisineChanged:
-                            (val) => setState(() => selectedCuisine = val),
-                        onDurationChanged:
-                            (val) => setState(() => selectedDuration = val),
-                        onDietTypeChanged:
-                            (val) => setState(() => selectedDietType = val),
-                        nameValidator:
-                            (val) =>
-                                val == null || val.isEmpty ? 'Required' : null,
-                        caloriesValidator:
-                            (val) =>
-                                val == null || val.isEmpty ? 'Required' : null,
-                      ),
-                      SizedBox(height: context.hp(20)),
-                      IngredientsList(
-                        ingredients: ingredients,
-                        onRemoveIngredient: _removeIngredient,
-                        onUnitChanged: (index, val) {
-                          setState(() => ingredients[index]['unit'] = val);
-                        },
-                        showError: false,
-                      ),
-                      AddIngredientButton(onPressed: _addIngredient),
-                      SizedBox(height: context.hp(16)),
-                      StepsField(
-                        stepsController: _stepsController,
-                        stepsValidator:
-                            (val) =>
-                                (val == null || val.trim().isEmpty)
-                                    ? 'Required'
-                                    : null,
-                        hintText: 'Enter the steps for preparing the meal...',
-                      ),
-                      if (mealViewModel.isLoading)
-                        const Center(child: CircularProgressIndicator()),
-                    ],
-                  ),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.save),
+                  onPressed: () async {
+                    final isConnected =
+                        await NetworkUtils.checkInternetAndShowDialog(context);
+                    if (!isConnected) return;
+                    if (!viewModel.isLoading) {
+                      await _handleSave(viewModel);
+                    }
+                  },
+                ),
+              ],
+            ),
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    MealImagePicker(
+                      selectedImage: _selectedImage,
+                      onPickImage: _pickImage,
+                      defaultAsset: 'assets/images/default_meal.jpg',
+                    ),
+                    const SizedBox(height: 20),
+                    MealInfoFields(
+                      mealNameController: _mealNameController,
+                      caloriesController: _caloriesController,
+                      selectedCuisine: selectedCuisine,
+                      selectedDuration: selectedDuration,
+                      selectedDietType: selectedDietType,
+                      selectedDifficulty: selectedDifficulty,
+                      onDifficultyChanged:
+                          (val) => setState(() => selectedDifficulty = val),
+                      onCuisineChanged:
+                          (val) => setState(() => selectedCuisine = val),
+                      onDurationChanged:
+                          (val) => setState(() => selectedDuration = val),
+                      onDietTypeChanged:
+                          (val) => setState(() => selectedDietType = val),
+                      nameValidator:
+                          (val) =>
+                              val == null || val.isEmpty ? 'Required' : null,
+                      caloriesValidator:
+                          (val) =>
+                              val == null || val.isEmpty ? 'Required' : null,
+                    ),
+                    SizedBox(height: context.hp(20)),
+                    IngredientsList(
+                      ingredients: ingredients,
+                      onRemoveIngredient: _removeIngredient,
+                      onUnitChanged:
+                          (index, val) =>
+                              setState(() => ingredients[index]['unit'] = val),
+                      showError: false,
+                    ),
+                    AddIngredientButton(onPressed: _addIngredient),
+                    SizedBox(height: context.hp(16)),
+                    StepsField(
+                      stepsController: _stepsController,
+                      stepsValidator:
+                          (val) =>
+                              val == null || val.trim().isEmpty
+                                  ? 'Required'
+                                  : null,
+                      hintText: 'Enter the steps for preparing the meal...',
+                    ),
+                    if (viewModel.isLoading)
+                      const Center(child: CircularProgressIndicator()),
+                  ],
                 ),
               ),
             ),
