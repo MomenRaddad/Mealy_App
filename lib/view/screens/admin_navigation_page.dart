@@ -4,7 +4,9 @@ import 'package:meal_app/view/screens/admin_screens/admin_home/admin_home.dart';
 import 'package:meal_app/view/screens/admin_screens/meals_management/meals_screen.dart';
 import 'package:meal_app/view/screens/admin_screens/settings/settings_screen.dart';
 import 'package:meal_app/view/screens/admin_screens/user_management/user_management_screen.dart';
+import 'package:meal_app/viewmodels/AdminMealsViewModel.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
+import 'package:provider/provider.dart';
 import '../../core/colors.dart';
 import '../../core/routes.dart';
 
@@ -34,7 +36,11 @@ class _AdminNavigationPageState extends State<AdminNavigationPage> {
         controller: _controller,
         screens: [
           AdminHomeScreen(),
-          MealsManagementScreen(),
+          // MealsManagementScreen(),
+          ChangeNotifierProvider(
+            create: (_) => AdminMealsViewModel(),
+            child: const MealsManagementScreen(),
+          ),
           Container(),
           UserManagementScreen(),
           SettingsAdminScreen(),
