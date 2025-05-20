@@ -119,7 +119,6 @@ class MealModel {
         orElse: () => MealDifficulty.easy,
       ),
 
-      // ✅ قيم ثابتة مؤقتًا إذا مش موجودة في فايربيز
       likes: map['likes'] ?? 120,
       chefs: map['chefs'] ?? 2,
     );
@@ -140,7 +139,6 @@ class MealModel {
       'rating': rating,
       'difficulty': difficulty.toString().split('.').last,
 
-      // ✅ لو حبيت تخزنهم كمان
       'likes': likes,
       'chefs': chefs,
     };
