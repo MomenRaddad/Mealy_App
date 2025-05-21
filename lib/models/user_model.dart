@@ -2,52 +2,50 @@ enum AccountStatus { active, inactive }
 
 class UserModel {
   final String userId;
-  final String name;
-  final String email;
-  final String password;
-  final bool privilegedUser;
-  final DateTime dateOfBirth;
+
+  final String userName;
+  final String userEmail;
+  final DateTime DOB;
   final String gender;
+  final bool isPrivileged;
+  final String accountStatus;
   final DateTime createdAt;
-  final AccountStatus accountStatus;
-  final Map<String, String> favoriteMeals; // Key: mealId, Value: addedDate (e.g., "19-5-2025")
+  final String phoneNumber;
 
   UserModel({
     required this.userId,
-    required this.name,
-    required this.email,
-    required this.password,
-    required this.privilegedUser,
-    required this.dateOfBirth,
+    required this.userName,
+    required this.userEmail,
+    required this.DOB,
     required this.gender,
-    required this.createdAt,
+    required this.isPrivileged,
     required this.accountStatus,
-    required this.favoriteMeals,
+    required this.createdAt,
+    required this.phoneNumber,
   });
 
-  Map<String, dynamic> toMap() => {
+  Map<String, dynamic> toJson() => {
         'userId': userId,
-        'name': name,
-        'email': email,
-        'password': password,
-        'privilegedUser': privilegedUser,
-        'dateOfBirth': dateOfBirth.toIso8601String(),
+        'userName': userName,
+        'userEmail': userEmail,
+        'DOB': DOB.toIso8601String(),
         'gender': gender,
+        'isPrivileged': isPrivileged,
+        'accountStatus': accountStatus,
         'createdAt': createdAt.toIso8601String(),
-        'accountStatus': accountStatus.name,
-        'favoriteMeals': favoriteMeals,
+        'phoneNumber': phoneNumber,
       };
 
-  factory UserModel.fromMap(Map<String, dynamic> map) => UserModel(
-        userId: map['userId'],
-        name: map['name'],
-        email: map['email'],
-        password: map['password'],
-        privilegedUser: map['privilegedUser'],
-        dateOfBirth: DateTime.parse(map['dateOfBirth']),
-        gender: map['gender'],
-        createdAt: DateTime.parse(map['createdAt']),
-        accountStatus: AccountStatus.values.firstWhere((e) => e.name == map['accountStatus']),
-        favoriteMeals: Map<String, String>.from(map['favoriteMeals'] ?? {}),
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+        userId: json['userId'],
+        userName: json['userName'],
+        userEmail: json['userEmail'],
+        DOB: DateTime.parse(json['DOB']),
+        gender: json['gender'],
+        isPrivileged: json['isPrivileged'],
+        accountStatus: json['accountStatus'],
+        createdAt: DateTime.parse(json['createdAt']),
+        phoneNumber: json['phoneNumber'],
+
       );
 }
