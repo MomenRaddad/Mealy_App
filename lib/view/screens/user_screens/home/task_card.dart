@@ -16,6 +16,8 @@ class TaskCard extends StatelessWidget {
     required this.isDone,
     this.onDelete,
     this.onEdit,
+    final VoidCallback? onToggleDone,
+
   });
 
   @override
