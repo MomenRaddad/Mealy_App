@@ -7,6 +7,8 @@ import 'user_screens/tasks/tasks_screen.dart';
 import 'user_screens/meals/explore_screen.dart';
 import 'user_screens/profile/profile_screen.dart';
 import 'user_screens/settings/settings_screen.dart';
+import 'user_screens/tasks/add_task_screen.dart';
+
 
 class UserNavigationPage extends StatefulWidget {
   const UserNavigationPage({super.key});
@@ -31,13 +33,12 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
       child: PersistentTabView(
         navBarHeight: MediaQuery.of(context).size.height * 0.07,
         padding: AppNavbarStyle.padding,
-
         context,
         controller: _controller,
         screens: [
           HomeScreen(),
           TasksScreen(),
-          ExploreScreen(),
+          Container(),
           ProfileScreen(),
           SettingsScreen(),
         ],
@@ -83,6 +84,16 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
           // borderRadius: BorderRadius.circular(10.0),
           colorBehindNavBar: AppColors.background,
         ),
+          onItemSelected: (index) {
+            if (index == 2) {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const AddTaskScreen()),
+              );
+            } else {
+              _controller.index = index;
+            }
+          }
       ),
     );
   }
