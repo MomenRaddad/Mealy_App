@@ -1,38 +1,47 @@
-enum AccountStatus { active, inactive, suspended }
-
 class UserModel {
   final String userId;
-  final String name;
-  final String email;
-  final String password;
-  final bool privilegedUser;
-  final DateTime dateOfBirth;
+  final String userName;
+  final String userEmail;
+  final DateTime DOB;
   final String gender;
+  final bool isPrivileged;
+  final String accountStatus;
   final DateTime createdAt;
-  final AccountStatus accountStatus;
+  final String phoneNumber;
 
   UserModel({
     required this.userId,
-    required this.name,
-    required this.email,
-    required this.password,
-    this.privilegedUser = false,
-    required this.dateOfBirth,
+    required this.userName,
+    required this.userEmail,
+    required this.DOB,
     required this.gender,
-    required this.createdAt,
+    required this.isPrivileged,
     required this.accountStatus,
+    required this.createdAt,
+    required this.phoneNumber,
   });
 
   Map<String, dynamic> toJson() => {
-        'UserID': userId,
-        'Name': name,
-        'Email': email,
-        'Password': password,
-        'PrivilegedUser': privilegedUser,
-        'DateOfBirth': dateOfBirth.toIso8601String(),
-        'Gender': gender,
-        'CreatedAt': createdAt.toIso8601String(),
-        'AccountStatus': accountStatus.name,
-
+        'userId': userId,
+        'userName': userName,
+        'userEmail': userEmail,
+        'DOB': DOB.toIso8601String(),
+        'gender': gender,
+        'isPrivileged': isPrivileged,
+        'accountStatus': accountStatus,
+        'createdAt': createdAt.toIso8601String(),
+        'phoneNumber': phoneNumber,
       };
+
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+        userId: json['userId'],
+        userName: json['userName'],
+        userEmail: json['userEmail'],
+        DOB: DateTime.parse(json['DOB']),
+        gender: json['gender'],
+        isPrivileged: json['isPrivileged'],
+        accountStatus: json['accountStatus'],
+        createdAt: DateTime.parse(json['createdAt']),
+        phoneNumber: json['phoneNumber'],
+      );
 }

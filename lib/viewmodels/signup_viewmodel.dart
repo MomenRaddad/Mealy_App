@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../models/user_model.dart';
+import 'package:meal_app/models/user_model.dart';
 
 class SignUpViewModel {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -12,35 +12,39 @@ class SignUpViewModel {
     required String password,
     required String gender,
     required DateTime dateOfBirth,
-    bool isAdmin = false,
+    required bool isAdmin,
+    required String phoneNumber, 
   }) async {
     try {
-      UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
-
-      String uid = userCredential.user!.uid;
-
-      UserModel user = UserModel(
-        userId: uid,
-        name: name,
+      // Firebase Auth registration
+      UserCredential userCred = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
-        privilegedUser: false,
-        dateOfBirth: dateOfBirth,
-        gender: gender,
-        createdAt: DateTime.now(),
-        accountStatus: AccountStatus.active,
       );
 
-      await _firestore.collection('users').doc(uid).set(user.toJson());
+      final String uid = userCred.user!.uid;
 
-      return null;
+      // Build UserModel
+      UserModel user = UserModel(
+        userId: uid,
+        userName: name,
+        userEmail: email,
+        DOB: dateOfBirth,
+        gender: gender,
+        isPrivileged: isAdmin,
+        accountStatus: "active",
+        createdAt: DateTime.now(),
+        phoneNumber: phoneNumber,
+      );
+
+      // Save to Firestore
+      await _firestore.collection("users").doc(uid).set(user.toJson());
+
+      return null; // success
     } on FirebaseAuthException catch (e) {
-      print(" FirebaseAuthException: ${e.message}");
-      return e.message;
+      return e.message ?? "Authentication failed";
     } catch (e) {
-      print(" General Exception: $e");
-      return 'Something went wrong';
+      return "Unexpected error: $e";
     }
   }
 }
