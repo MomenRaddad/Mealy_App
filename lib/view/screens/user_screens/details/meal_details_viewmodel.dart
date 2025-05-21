@@ -7,19 +7,19 @@ class MealDetailsViewModel extends ChangeNotifier {
 
   Future<void> loadMealById(String id) async {
     try {
-      final doc = await FirebaseFirestore.instance.collection('mealsList').doc(id).get();
+      final doc = await FirebaseFirestore.instance.collection('meals').doc(id).get();
       if (doc.exists) {
         meal = doc.data();
       }
     } catch (e) {
-      debugPrint("❌ Error loading meal: $e");
+      debugPrint("\u274c Error loading meal: \$e");
     }
     isLoading = false;
     notifyListeners();
   }
 
   Future<void> markMealAsDone(String mealId, String title, String image) async {
-    final mealRef = FirebaseFirestore.instance.collection('mealsList').doc(mealId);
+    final mealRef = FirebaseFirestore.instance.collection('meals').doc(mealId);
 
     try {
       await mealRef.update({'doneCount': FieldValue.increment(1)});
@@ -32,7 +32,7 @@ class MealDetailsViewModel extends ChangeNotifier {
         'visitedAt': DateTime.now(),
       });
     } catch (e) {
-      debugPrint("❌ Failed to mark meal as done: $e");
+      debugPrint("\u274c Failed to mark meal as done: \$e");
     }
   }
 }

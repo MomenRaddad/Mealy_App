@@ -1,3 +1,4 @@
+// ✅ UPDATED MealDetailsScreen with proper ingredient + step parsing
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'meal_details_viewmodel.dart';
@@ -34,12 +35,22 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     }
 
     final meal = vm.meal!;
-    final image = meal['image'] ?? '';
-    final title = meal['title'] ?? 'No Title';
+    final image = meal['photoUrl'] ?? '';
+    final title = meal['name'] ?? 'No Title';
     final duration = meal['duration'] ?? '';
     final difficulty = meal['difficulty'] ?? '';
-    final ingredients = (meal['ingredients'] as List).cast<String>();
-    final steps = (meal['steps'] as List).cast<String>();
+
+    // ✅ Safe ingredient extraction
+    final ingredientsRaw = meal['ingredients'];
+    final List<Map<String, dynamic>> ingredients = ingredientsRaw is List
+        ? ingredientsRaw.cast<Map<String, dynamic>>()
+        : [];
+
+    // ✅ Safe step extraction
+    final stepsRaw = meal['steps'];
+    final List<String> steps = stepsRaw is List
+        ? stepsRaw.cast<String>()
+        : stepsRaw.toString().split('.');
 
     return Scaffold(
       body: Stack(
@@ -64,6 +75,7 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Title & Favorite
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -83,14 +95,14 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                   const SizedBox(height: 24),
 
                   const Text("Ingredients", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                  ...ingredients.map((i) => Text("• $i")),
+                  ...ingredients.map((i) => Text("• ${i['quantity']} ${i['unit']} of ${i['name']}")),
 
                   const SizedBox(height: 24),
                   const Text("Preparation Steps", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                   const SizedBox(height: 10),
                   ...steps.asMap().entries.map((entry) => Padding(
                         padding: const EdgeInsets.only(bottom: 6),
-                        child: Text("${entry.key + 1}. ${entry.value}"),
+                        child: Text("${entry.key + 1}. ${entry.value.trim()}"),
                       )),
 
                   const SizedBox(height: 30),

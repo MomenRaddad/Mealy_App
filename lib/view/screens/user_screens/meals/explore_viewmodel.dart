@@ -6,25 +6,25 @@ class ExploreViewModel extends ChangeNotifier {
 
   Future<void> loadMeals() async {
     try {
-      final snapshot = await FirebaseFirestore.instance.collection('mealsList').get();
+      final snapshot = await FirebaseFirestore.instance.collection('meals').get();
 
       meals = snapshot.docs.map((doc) {
         final data = doc.data();
 
         return {
           'id': doc.id,
-          'title': data['title'] ?? 'Untitled Meal',
-          'image': data['image'] ?? '',
+          'title': data['name'] ?? 'Untitled Meal',
+          'image': data['photoUrl'] ?? '',
           'difficulty': data['difficulty'] ?? 'Unknown',
           'duration': data['duration'] ?? '',
           'ingredients': data['ingredients'] ?? [],
-          'steps': data['steps'] ?? [],
+          'steps': data['steps'] ?? '',
         };
       }).toList();
 
       notifyListeners();
     } catch (e) {
-      debugPrint("❌ Error loading meals from Firestore: $e");
+      debugPrint("\u274c Error loading meals from Firestore: \$e");
     }
   }
 }
