@@ -1,5 +1,8 @@
+enum AccountStatus { active, inactive }
+
 class UserModel {
   final String userId;
+
   final String userName;
   final String userEmail;
   final DateTime DOB;
@@ -43,5 +46,6 @@ class UserModel {
         accountStatus: json['accountStatus'],
         createdAt: DateTime.parse(json['createdAt']),
         phoneNumber: json['phoneNumber'],
+
       );
 }

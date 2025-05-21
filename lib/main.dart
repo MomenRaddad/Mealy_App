@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'core/app_theme.dart';
 import 'core/routes.dart';
-
+import 'view/screens/user_screens/details/meal_details_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();

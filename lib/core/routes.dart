@@ -6,7 +6,10 @@ import '../view/screens/Login_Signup/Login/login.dart';
 import '../view/screens/splash_screen/splash_screen.dart';
 import '../view/screens/user_navigation_page.dart';
 import '../view/screens/admin_navigation_page.dart';
+
 import 'package:meal_app/view/screens/admin_screens/add_meal/add_meal.dart';
+import 'package:meal_app/view/screens/user_screens/meals/explore_screen.dart';
+import 'package:meal_app/view/screens/user_screens/details/meal_details_screen.dart'; 
 
 class AppRoutes {
   // Route names
@@ -19,7 +22,8 @@ class AppRoutes {
   static const String adminNav = '/adminNav';
   static const String settingsAdmin = '/settingsAdmin';
   static const String addMeal = '/addMeal';
-
+  static const String mealDetails = '/mealDetails';
+  static const String exploreMeals ='/exploreMeals';
   // static const String mealDetails = '/meal-details';
   // static const String favorites = '/favorites';
 
@@ -41,6 +45,20 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => SettingsAdminScreen());
       case addMeal:
         return MaterialPageRoute(builder: (_) => AddMealScreen());
+      case exploreMeals:
+      return MaterialPageRoute(builder:(_) => ExploreScreen() );
+     case AppRoutes.mealDetails:
+  final meal = settings.arguments as Map<String, dynamic>;
+  return MaterialPageRoute(
+    builder: (_) => MealDetailsScreen(
+      title: meal['title'],
+      image: meal['image'],
+      duration: meal['duration'],
+      difficulty: meal['difficulty'],
+      ingredients: meal['ingredients'],
+      steps: meal['steps'],
+    ),
+  );
       default:
         return MaterialPageRoute(
           builder:
