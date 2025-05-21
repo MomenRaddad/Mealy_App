@@ -1,4 +1,4 @@
-// ✅ UPDATED MealDetailsScreen with proper ingredient + step parsing
+// ✅ UPDATED MealDetailsScreen with undoable Done button and improved parsing
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'meal_details_viewmodel.dart';
@@ -15,6 +15,8 @@ class MealDetailsScreen extends StatefulWidget {
 }
 
 class _MealDetailsScreenState extends State<MealDetailsScreen> {
+  bool isDone = false;
+
   @override
   void initState() {
     super.initState();
@@ -40,13 +42,11 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
     final duration = meal['duration'] ?? '';
     final difficulty = meal['difficulty'] ?? '';
 
-    // ✅ Safe ingredient extraction
     final ingredientsRaw = meal['ingredients'];
     final List<Map<String, dynamic>> ingredients = ingredientsRaw is List
         ? ingredientsRaw.cast<Map<String, dynamic>>()
         : [];
 
-    // ✅ Safe step extraction
     final stepsRaw = meal['steps'];
     final List<String> steps = stepsRaw is List
         ? stepsRaw.cast<String>()
@@ -75,7 +75,6 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Title & Favorite
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -109,18 +108,29 @@ class _MealDetailsScreenState extends State<MealDetailsScreen> {
                   ElevatedButton.icon(
                     onPressed: () async {
                       final vm = Provider.of<MealDetailsViewModel>(context, listen: false);
-                      await vm.markMealAsDone(widget.mealId, title, image);
 
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Meal marked as done!')),
-                        );
+                      if (isDone) {
+                        await vm.undoMealAsDone(widget.mealId, title);
+                        setState(() => isDone = false);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Marked as not done.')),
+                          );
+                        }
+                      } else {
+                        await vm.markMealAsDone(widget.mealId, title, image);
+                        setState(() => isDone = true);
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('Meal marked as done!')),
+                          );
+                        }
                       }
                     },
-                    icon: const Icon(Icons.check),
-                    label: const Text("Done"),
+                    icon: Icon(isDone ? Icons.undo : Icons.check),
+                    label: Text(isDone ? "Undo" : "Done"),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary,
+                      backgroundColor: isDone ? Colors.grey : AppColors.primary,
                       foregroundColor: Colors.white,
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),

@@ -35,6 +35,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => AddMealScreen());
       case exploreMeals:
       return MaterialPageRoute(builder:(_) => ExploreScreen() );
+    case '/home':
+  return MaterialPageRoute(builder: (_) => UserNavigationPage());
 
       default:
         return MaterialPageRoute(

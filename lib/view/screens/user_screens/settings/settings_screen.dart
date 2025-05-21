@@ -49,12 +49,16 @@ class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
       const SnackBar(content: Text("Cache cleared")),
     );
   }
+void _logout() {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text("Logged out")),
+  );
 
-  void _logout() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Logged out")),
-    );
-  }
+  Future.delayed(const Duration(milliseconds: 300), () {
+    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+  });
+}
+
 
   void _openHistoryScreen() {
     Navigator.push(
