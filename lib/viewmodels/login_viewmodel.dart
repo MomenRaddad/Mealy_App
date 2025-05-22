@@ -27,24 +27,33 @@ class LoginViewModel with ChangeNotifier {
       // Initialize session
       final doc = await _firestore.collection('users').doc(user.uid).get();
       final data = doc.data();
-      UserSession.uid = user.uid;
-      UserSession.name = data?['name'];
-      UserSession.email = user.email;
-      UserSession.role = data?['role'];
-      UserSession.status = data?['status'];
+
+      if (data != null) {
+        UserSession.fromMap(data);
+      }
 
       // Track unique daily login
       final today = DateTime.now();
       final docId = "${today.year}-${today.month}-${today.day}";
-      final logRef = _firestore.collection('daily_logins').doc(docId);
-      final logSnap = await logRef.get();
 
-      if (!logSnap.exists || !(logSnap.data()?['uids'] ?? []).contains(user.uid)) {
-        await logRef.set({
+      // LOGIN LOGIC
+      final loginRef = _firestore.collection('daily_logins').doc(docId);
+      final loginSnap = await loginRef.get();
+
+      if (!loginSnap.exists || !(loginSnap.data()?['uids'] ?? []).contains(user.uid)) {
+        await loginRef.set({
           'uids': FieldValue.arrayUnion([user.uid]),
           'date': today.toIso8601String(),
         }, SetOptions(merge: true));
       }
+
+      // Track daily visits
+      final visitRef = _firestore.collection('daily_visits').doc(docId);
+      await visitRef.set({
+        'visits': FieldValue.increment(1),
+        'date': today.toIso8601String(),
+      }, SetOptions(merge: true));
+
 
       return null; // Success
     } on FirebaseAuthException catch (e) {
@@ -53,4 +62,5 @@ class LoginViewModel with ChangeNotifier {
       return 'An error occurred';
     }
   }
+
 }
