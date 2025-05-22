@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/utils/validation_utils.dart';
 
 import 'package:meal_app/view/screens/Login_Signup/Signup/signup.dart';
 import 'package:meal_app/view/screens/Login_Signup/forget_password/reset_password/reset_password_email.dart';
+import 'package:meal_app/viewmodels/login_viewmodel.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -13,27 +15,79 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+ final _formKey = GlobalKey<FormState>();
+  bool _rememberMe = false;
+
   bool _obscurePassword = true;
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _login() async {
-    try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
-      );
+    if (!_formKey.currentState!.validate()) return;
 
-      Navigator.pushReplacementNamed(context, '/userNav');
-    } on FirebaseAuthException catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.message ?? 'Login failed'),
-          backgroundColor: Colors.red,
-        ),
-      );
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return Dialog(
+          backgroundColor: AppColors.background,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(color: AppColors.primary),
+                SizedBox(width: 20),
+                Text("Logging in..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
+    final _viewModel = LoginViewModel();
+    final error = await _viewModel.login(
+      _emailController.text.trim(),
+      _passwordController.text.trim(),
+      rememberMe: _rememberMe,
+    );
+
+    Navigator.of(context).pop(); // dismiss loading dialog
+
+    if (error != null) {
+      showErrorDialog(context, error);
+      return;
     }
+
+    Navigator.pushReplacementNamed(context, '/userNav');
   }
+
+
+  void showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.background,
+        title: const Text('Login Failed'),
+        content: Text(
+          message,
+          style: const TextStyle(color: AppColors.textPrimary),
+          ),
+        actions: [
+          TextButton(
+            child: const Text(
+              'OK',
+              style: TextStyle(color: AppColors.primary),
+              ),            
+            onPressed: () => Navigator.of(ctx).pop(),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen> {
           ClipPath(
             clipper: TopWaveClipper(),
             child: Container(
-              color: Colors.green,
+              color: AppColors.primary,
               height: 200,
               width: double.infinity,
             ),
@@ -57,46 +111,81 @@ class _LoginScreenState extends State<LoginScreen> {
                   const SizedBox(height: 10),
                   const Text(
                     'Login',
-                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                   ),
                   const SizedBox(height: 10),
-                  const Divider(thickness: 2, color: Colors.green, endIndent: 250),
+                  const Divider(thickness: 2, color: AppColors.primary, endIndent: 250),
                   const SizedBox(height: 30),
 
-                  const Text('Email'),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _emailController,
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(
-                      hintText: 'your@email.com',
-                      prefixIcon: Icon(Icons.email_outlined),
-                      border: UnderlineInputBorder(),
-                      focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.green),
-                      ),
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text('Email'),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _emailController,
+                          keyboardType: TextInputType.emailAddress,
+                          decoration: const InputDecoration(
+                            hintText: 'your@email.com',
+                            prefixIcon: Icon(Icons.email_outlined),
+                            border: UnderlineInputBorder(),
+                            focusedBorder: UnderlineInputBorder(
+                              borderSide: BorderSide(color: AppColors.primary),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (!ValidationUtils.isValidEmail(value ?? '')) {
+                              return 'Please enter a valid email address';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 20),
+                        const Text('Password'),
+                        const SizedBox(height: 8),
+                        TextFormField(
+                          controller: _passwordController,
+                          obscureText: _obscurePassword,
+                          decoration: InputDecoration(
+                            hintText: 'Enter password',
+                            prefixIcon: const Icon(Icons.lock_outline),
+                            suffixIcon: IconButton(
+                              icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+                              onPressed: () {
+                                setState(() {
+                                  _obscurePassword = !_obscurePassword;
+                                });
+                              },
+                            ),
+                            border: const UnderlineInputBorder(),
+                            focusedBorder: const UnderlineInputBorder(
+                              borderSide: BorderSide(color: AppColors.primary),
+                            ),
+                          ),
+                          validator: (value) {
+                            if (!ValidationUtils.isValidPassword(value ?? '')) {
+                              return 'Password must be at least 6 characters';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: _rememberMe,
+                              onChanged: (val) => setState(() => _rememberMe = val!),
+                              activeColor: AppColors.primary,
+                            ),
+                            const Text("Remember Me"),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
 
-                  const SizedBox(height: 20),
-                  const Text('Password'),
-                  const SizedBox(height: 8),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: _obscurePassword,
-                    decoration: InputDecoration(
-                      hintText: 'Enter your password',
-                      prefixIcon: const Icon(Icons.lock_outline),
-                      suffixIcon: IconButton(
-                        icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
-                        onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
-                      ),
-                      border: const UnderlineInputBorder(),
-                      focusedBorder: const UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.green),
-                      ),
-                    ),
-                  ),
 
                   const SizedBox(height: 15),
                   Align(
@@ -106,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         context,
                         MaterialPageRoute(builder: (_) => const ResetPasswordEmail()),
                       ),
-                      child: const Text("Forgot Password?", style: TextStyle(color: Colors.green)),
+                      child: const Text("Forgot Password?", style: TextStyle(color: AppColors.primary)),
                     ),
                   ),
 
@@ -116,7 +205,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     height: 48,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
                       onPressed: _login,
@@ -134,7 +223,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           const TextSpan(text: "Don't have an account? "),
                           TextSpan(
                             text: "Sign up",
-                            style: const TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                            style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold),
                             recognizer: TapGestureRecognizer()
                               ..onTap = () => Navigator.push(
                                 context,
