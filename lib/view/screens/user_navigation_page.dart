@@ -83,16 +83,20 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
           // borderRadius: BorderRadius.circular(10.0),
           colorBehindNavBar: AppColors.background,
         ),
-          onItemSelected: (index) {
-            if (index == 2) {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => const AddTaskScreen()),
-              );
-            } else {
-              _controller.index = index;
-            }
-          }
+    onItemSelected: (index) async {
+    if (index == 2) {
+    final result = await Navigator.push(
+    context,
+    MaterialPageRoute(builder: (_) => const AddTaskScreen()),
+    );
+    if (result == 'refresh') {
+    _controller.jumpToTab(0); // HomeScreen reload
+    }
+    } else {
+    _controller.index = index;
+    }
+    },
+
       ),
     );
   }

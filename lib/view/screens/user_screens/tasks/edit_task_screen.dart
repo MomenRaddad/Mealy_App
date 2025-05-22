@@ -51,7 +51,7 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
   }
 
   void _showSnackbar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message),backgroundColor: Colors.red,));
   }
 
   Future<void> _updateTask() async {
