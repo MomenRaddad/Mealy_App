@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/models/user_session.dart';
 import 'package:meal_app/utils/validation_utils.dart';
 
 import 'package:meal_app/view/screens/Login_Signup/Signup/signup.dart';
@@ -61,7 +62,14 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    Navigator.pushReplacementNamed(context, '/userNav');
+    debugPrint("${UserSession.toStringDetails()}");
+
+    // Check if the user is privileged
+    if (UserSession.isPrivileged) {
+      Navigator.pushReplacementNamed(context, '/adminNav');
+    } else {
+      Navigator.pushReplacementNamed(context, '/userNav');
+    }
   }
 
 
