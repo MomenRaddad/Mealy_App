@@ -47,18 +47,9 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => AddMealScreen());
       case exploreMeals:
       return MaterialPageRoute(builder:(_) => ExploreScreen() );
-     case AppRoutes.mealDetails:
-  final meal = settings.arguments as Map<String, dynamic>;
-  return MaterialPageRoute(
-    builder: (_) => MealDetailsScreen(
-      title: meal['title'],
-      image: meal['image'],
-      duration: meal['duration'],
-      difficulty: meal['difficulty'],
-      ingredients: meal['ingredients'],
-      steps: meal['steps'],
-    ),
-  );
+    case '/home':
+  return MaterialPageRoute(builder: (_) => UserNavigationPage());
+
       default:
         return MaterialPageRoute(
           builder:

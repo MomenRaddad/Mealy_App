@@ -10,6 +10,7 @@ class UserModel {
   final String accountStatus;
   final DateTime createdAt;
   final String phoneNumber;
+  final Map<String, String> favoriteMeals = new Map(); // Key: mealId, Value: addedDate (e.g., "19-5-2025")
 
   UserModel({
     required this.userId,

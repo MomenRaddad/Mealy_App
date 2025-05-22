@@ -1,8 +1,9 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meal_app/core/colors.dart';
-import 'package:meal_app/core/constants.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -20,6 +21,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
   DateTime? _birthDate;
 
   final picker = ImagePicker();
+  final String userId = '1'; // static userId for now
 
   Future<void> _pickImage(bool isCover) async {
     final picked = await picker.pickImage(source: ImageSource.gallery);
@@ -34,9 +36,41 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     }
   }
 
+  Future<String> _uploadImage(XFile file, String path) async {
+    final ref = FirebaseStorage.instance.ref().child(path);
+    await ref.putFile(File(file.path));
+    return await ref.getDownloadURL();
+  }
+
+  Future<void> _saveProfile() async {
+    String? profileURL;
+    String? backgroundURL;
+
+    if (_profileImage != null) {
+      profileURL = await _uploadImage(_profileImage!, 'users/$userId/profile.jpg');
+    }
+    if (_coverImage != null) {
+      backgroundURL = await _uploadImage(_coverImage!, 'users/$userId/background.jpg');
+    }
+
+    final updates = {
+      'user_name': _name,
+      'email': _email,
+      if (profileURL != null) 'photoURL': profileURL,
+      if (backgroundURL != null) 'backgroundURL': backgroundURL,
+    };
+
+    await FirebaseFirestore.instance.collection('profile').doc(userId).update(updates);
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Profile updated successfully.")),
+      );
+    }
+  }
+
   Future<void> _editField(String title, String initialValue, Function(String) onSave) async {
     final controller = TextEditingController(text: initialValue);
-
     await showDialog(
       context: context,
       builder: (_) => AlertDialog(
@@ -79,7 +113,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-          
             Stack(
               clipBehavior: Clip.none,
               children: [
@@ -92,13 +125,11 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                         image: DecorationImage(
                           image: _coverImage != null
                               ? FileImage(File(_coverImage!.path))
-                              : const NetworkImage("https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6")
-                                  as ImageProvider,
+                              : const NetworkImage("https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6") as ImageProvider,
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    
                     Container(height: 60, color: Colors.grey[100]),
                   ],
                 ),
@@ -147,21 +178,16 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ],
             ),
             const SizedBox(height: 40),
-
             _editableTile(
               title: "Full Name",
               value: _name,
               onEdit: () => _editField("Name", _name, (val) => setState(() => _name = val)),
             ),
-
-         
             _editableTile(
               title: "Email",
               value: _email,
               onEdit: () => _editField("Email", _email, (val) => setState(() => _email = val)),
             ),
-
-          
             _editableTile(
               title: "Date of Birth",
               value: _birthDate != null
@@ -169,25 +195,18 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                   : "Not set",
               onEdit: _editBirthDate,
             ),
-
             const SizedBox(height: 16),
             TextButton(
-              onPressed: () {
-              
-              },
+              onPressed: () {},
               child: const Text("Click here to reset or update your password"),
             ),
             const SizedBox(height: 20),
-
-         
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    
-                  },
+                  onPressed: _saveProfile,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
