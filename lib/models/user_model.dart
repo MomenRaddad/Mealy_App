@@ -2,7 +2,6 @@ enum AccountStatus { active, inactive }
 
 class UserModel {
   final String userId;
-
   final String userName;
   final String userEmail;
   final DateTime DOB;
