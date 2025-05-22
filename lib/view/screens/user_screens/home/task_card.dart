@@ -1,6 +1,8 @@
 
 import 'package:flutter/material.dart';
 
+import 'dialogs/confirm_delete_dialog.dart';
+
 class TaskCard extends StatelessWidget {
   final String title;
   final String time;
@@ -41,7 +43,14 @@ class TaskCard extends StatelessWidget {
             if (onDelete != null)
               IconButton(
                 icon: const Icon(Icons.delete, color: Colors.red),
-                onPressed: onDelete,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => ConfirmDeleteDialog(
+                      onConfirm: onDelete!,
+                    ),
+                  );
+                },
               ),
           ],
         ),
