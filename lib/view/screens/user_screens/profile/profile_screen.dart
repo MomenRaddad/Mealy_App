@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/core/constants.dart';
+import 'package:meal_app/utils/navigation_utils.dart';
+import 'package:meal_app/view/screens/user_screens/favorites/favorites_screen.dart';
 import 'package:meal_app/view/screens/user_screens/settings/account_settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -127,7 +129,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     _profileTile(
                       icon: Icons.favorite,
                       label: "Favorites",
-                      onTap: () {},
+                      onTap: () {
+                        AppNavigator.pushWithNavBar(context, FavoritesScreen());
+                      },
                     ),
                     _profileTile(
                       icon: Icons.mail_outline,

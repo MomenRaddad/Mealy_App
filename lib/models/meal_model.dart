@@ -2,7 +2,7 @@ enum DietaryType { vegan, vegetarian, keto, regular }
 
 enum DurationType { less15min, min15to30, min30to60, more60min }
 
-enum CuisineType { italian, arabic, asian, american, indian, other }
+enum CuisineType { italian, arabic, asian, american, other }
 
 enum UnitType { g, ml, pcs, cups, Tbsp, Tsp }
 
@@ -66,6 +66,10 @@ class MealModel {
   final String steps;
   final double rating;
   final MealDifficulty difficulty;
+
+  final int likes;
+  final int chefs;
+
   MealModel({
     this.id,
     required this.name,
@@ -78,6 +82,8 @@ class MealModel {
     required this.steps,
     required this.rating,
     required this.difficulty,
+    required this.likes,
+    required this.chefs,
   });
 
   factory MealModel.fromMap(Map<String, dynamic> map, {String? id}) {
@@ -112,8 +118,13 @@ class MealModel {
         (e) => e.toString().split('.').last == (map['difficulty'] ?? 'easy'),
         orElse: () => MealDifficulty.easy,
       ),
+
+      likes: map['likes'] ?? 120,
+      chefs: map['chefs'] ?? 2,
     );
   }
+
+  get createdAt => null;
 
   Map<String, dynamic> toMap() {
     return {
@@ -127,6 +138,40 @@ class MealModel {
       'steps': steps,
       'rating': rating,
       'difficulty': difficulty.toString().split('.').last,
+
+      'likes': likes,
+      'chefs': chefs,
     };
+  }
+
+  MealModel copyWith({
+    String? name,
+    String? photoUrl,
+    CuisineType? cuisine,
+    DurationType? duration,
+    int? calories,
+    DietaryType? dietaryType,
+    List<MealIngredient>? ingredients,
+    String? steps,
+    double? rating,
+    MealDifficulty? difficulty,
+    int? likes,
+    int? chefs,
+  }) {
+    return MealModel(
+      id: id,
+      name: name ?? this.name,
+      photoUrl: photoUrl ?? this.photoUrl,
+      cuisine: cuisine ?? this.cuisine,
+      duration: duration ?? this.duration,
+      calories: calories ?? this.calories,
+      dietaryType: dietaryType ?? this.dietaryType,
+      ingredients: ingredients ?? this.ingredients,
+      steps: steps ?? this.steps,
+      rating: rating ?? this.rating,
+      difficulty: difficulty ?? this.difficulty,
+      likes: likes ?? this.likes,
+      chefs: chefs ?? this.chefs,
+    );
   }
 }

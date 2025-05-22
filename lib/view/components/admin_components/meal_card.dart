@@ -10,7 +10,7 @@ class MealCard extends StatelessWidget {
   final int likes;
   final int chefs;
   final double rating;
-
+  final VoidCallback? onEdit;
   const MealCard({
     super.key,
     required this.title,
@@ -20,6 +20,7 @@ class MealCard extends StatelessWidget {
     required this.likes,
     required this.chefs,
     required this.rating,
+    this.onEdit,
   });
 
   @override
@@ -37,12 +38,20 @@ class MealCard extends StatelessWidget {
             children: [
               ClipRRect(
                 borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                child: Image.network(
-                  imageUrl,
-                  height: 160,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
+                child:
+                    imageUrl != ""
+                        ? Image.network(
+                          imageUrl,
+                          height: 160,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        )
+                        : Image.network(
+                          "https://syria.adra.cloud/wp-content/uploads/2021/10/empty.jpg",
+                          height: 160,
+                          width: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
               ),
               Positioned(
                 top: 0,
@@ -67,28 +76,76 @@ class MealCard extends StatelessWidget {
               ),
             ],
           ),
-          // Title + subtitle
-          Padding(
-            // padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-            padding: const EdgeInsets.only(left: 12, top: 8, bottom: 2),
-            child: Text(
-              title,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: AppColors.textPrimary,
+
+          // Padding(
+          //   // padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          //   padding: const EdgeInsets.only(left: 12, top: 8, bottom: 2),
+          //   child: Text(
+          //     title,
+          //     style: TextStyle(
+          //       fontWeight: FontWeight.bold,
+          //       fontSize: 16,
+          //       color: AppColors.textPrimary,
+          //     ),
+          //   ),
+          // ),
+          // Padding(
+          //   padding: const EdgeInsets.only(left: 12, bottom: 8, right: 12),
+          //   child: Text(
+          //     timeAndCal,
+          //     style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
+          //   ),
+          // ),
+          Row(
+            children: [
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    // padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.only(left: 12, top: 8, bottom: 2),
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 12, bottom: 8),
+                    child: Text(
+                      timeAndCal,
+                      style: TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ),
+              Spacer(),
+              Padding(
+                padding: const EdgeInsets.only(
+                  left: 12,
+                  top: 8,
+                  bottom: 8,
+                  right: 12,
+                ),
+                child: IconButton(
+                  icon: const Icon(
+                    Icons.edit,
+                    size: 20,
+                    color: AppColors.textSecondary,
+                  ),
+                  onPressed: onEdit,
+                ),
+              ),
+            ],
           ),
-          Padding(
-            padding: const EdgeInsets.only(left: 12, bottom: 8, right: 12),
-            child: Text(
-              timeAndCal,
-              style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-            ),
-          ),
-          // SizedBox(height: 12),
-          // Bottom stats
+
+          // // SizedBox(height: 12),
           Container(width: double.infinity, height: 1, color: Colors.grey[300]),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
