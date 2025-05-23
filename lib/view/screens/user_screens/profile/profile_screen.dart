@@ -1,24 +1,26 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:meal_app/core/colors.dart';
-import 'package:meal_app/core/constants.dart';
+import 'package:meal_app/viewmodels/profile_viewmodel.dart';
 import 'package:meal_app/view/screens/user_screens/settings/account_settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState(); 
+  _ProfileScreenState createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
   XFile? _profileImage;
 
-  final String userName = "Islam Yasin";
-  final String userHandle = "@islamyasin";
-  final String profileImageUrl = "https://wallpapersok.com/images/hd/cool-anime-boy-pfp-hotaro-oreki-ejrnayvw61coeizn.jpg";
-  final String coverImageUrl = "https://i.pinimg.com/736x/60/cb/46/60cb4600ad2427938722b77faba6426a.jpg";
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ProfileViewModel>(context, listen: false).fetchUserProfile("1"); 
+  }
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -30,6 +32,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final profileVM = Provider.of<ProfileViewModel>(context);
+    final user = profileVM.user;
+
+    if (profileVM.isLoading || user == null) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: SafeArea(
@@ -44,12 +55,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(coverImageUrl),
+                        image: NetworkImage(user.backgroundURL),
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
-
                   Positioned(
                     bottom: -40,
                     left: MediaQuery.of(context).size.width / 2 - 55,
@@ -63,7 +73,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             radius: 50,
                             backgroundImage: _profileImage != null
                                 ? FileImage(File(_profileImage!.path))
-                                : NetworkImage(profileImageUrl) as ImageProvider,
+                                : NetworkImage(user.photoURL) as ImageProvider,
                           ),
                         ),
                         Positioned(
@@ -94,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                userName,
+                user.name,
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -102,7 +112,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               Text(
-                userHandle,
+                user.email,
                 style: const TextStyle(
                   fontSize: 14,
                   color: AppColors.textSecondary,
@@ -110,6 +120,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 30),
 
+              // Settings Tiles
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
@@ -140,12 +151,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const SizedBox(height: 30),
 
+              // Logout Button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () {
+                      Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
                     },
                     icon: const Icon(Icons.logout),
                     label: const Text("Logout"),

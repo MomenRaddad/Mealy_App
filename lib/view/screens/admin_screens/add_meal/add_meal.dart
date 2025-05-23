@@ -5,7 +5,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:meal_app/utils/size_extensions.dart';
 import 'package:provider/provider.dart';
 
-import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/viewmodels/add_meal_viewmodel.dart';
 import 'package:meal_app/models/meal_model.dart';
 

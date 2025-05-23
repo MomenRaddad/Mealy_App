@@ -1,9 +1,11 @@
 import 'dart:io';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/viewmodels/profile_viewmodel.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -13,72 +15,36 @@ class AccountSettingsScreen extends StatefulWidget {
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
-  XFile? _profileImage;
-  XFile? _coverImage;
-
-  String _name = "Islam Yasin";
-  String _email = "0islamyasin@gmail.com";
-  DateTime? _birthDate;
-
+  XFile? _newProfileImage;
+  XFile? _newCoverImage;
   final picker = ImagePicker();
-  final String userId = '1'; // static userId for now
 
   Future<void> _pickImage(bool isCover) async {
     final picked = await picker.pickImage(source: ImageSource.gallery);
     if (picked != null) {
       setState(() {
         if (isCover) {
-          _coverImage = picked;
+          _newCoverImage = picked;
         } else {
-          _profileImage = picked;
+          _newProfileImage = picked;
         }
       });
     }
   }
 
-  Future<String> _uploadImage(XFile file, String path) async {
-    final ref = FirebaseStorage.instance.ref().child(path);
-    await ref.putFile(File(file.path));
+  Future<String> _uploadImageToStorage(XFile image, String path) async {
+    final ref = FirebaseStorage.instance.ref().child('$path/${const Uuid().v4()}');
+    await ref.putFile(File(image.path));
     return await ref.getDownloadURL();
   }
 
-  Future<void> _saveProfile() async {
-    String? profileURL;
-    String? backgroundURL;
-
-    if (_profileImage != null) {
-      profileURL = await _uploadImage(_profileImage!, 'users/$userId/profile.jpg');
-    }
-    if (_coverImage != null) {
-      backgroundURL = await _uploadImage(_coverImage!, 'users/$userId/background.jpg');
-    }
-
-    final updates = {
-      'user_name': _name,
-      'email': _email,
-      if (profileURL != null) 'photoURL': profileURL,
-      if (backgroundURL != null) 'backgroundURL': backgroundURL,
-    };
-
-    await FirebaseFirestore.instance.collection('profile').doc(userId).update(updates);
-
-    if (context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Profile updated successfully.")),
-      );
-    }
-  }
-
-  Future<void> _editField(String title, String initialValue, Function(String) onSave) async {
-    final controller = TextEditingController(text: initialValue);
+  Future<void> _editField(String label, String currentValue, Function(String) onSave) async {
+    final controller = TextEditingController(text: currentValue);
     await showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text("Edit $title"),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(hintText: "Enter $title"),
-        ),
+        title: Text("Edit $label"),
+        content: TextField(controller: controller),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
           ElevatedButton(
@@ -87,32 +53,65 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               Navigator.pop(context);
             },
             child: const Text("Save"),
-          )
+          ),
         ],
       ),
     );
   }
 
-  Future<void> _editBirthDate() async {
+  Future<void> _editBirthDate(DateTime? currentDate, Function(DateTime) onSave) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _birthDate ?? DateTime(2000),
+      initialDate: currentDate ?? DateTime(2000),
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
     );
     if (picked != null) {
-      setState(() => _birthDate = picked);
+      onSave(picked);
+    }
+  }
+
+  Future<void> _saveProfile(ProfileViewModel vm) async {
+    final user = vm.user!;
+    String newPhotoURL = user.photoURL;
+    String newBackgroundURL = user.backgroundURL;
+
+    if (_newProfileImage != null) {
+      newPhotoURL = await _uploadImageToStorage(_newProfileImage!, 'profile_photos');
+    }
+    if (_newCoverImage != null) {
+      newBackgroundURL = await _uploadImageToStorage(_newCoverImage!, 'cover_photos');
+    }
+
+    final updated = user.copyWith(
+      photoURL: newPhotoURL,
+      backgroundURL: newBackgroundURL,
+    );
+
+    await vm.updateUserProfile(updated);
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Profile saved successfully ✅")),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final vm = Provider.of<ProfileViewModel>(context);
+    final user = vm.user;
+
+    if (user == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(title: const Text("Edit Profile")),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // Cover + Profile Image
             Stack(
               clipBehavior: Clip.none,
               children: [
@@ -123,9 +122,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: _coverImage != null
-                              ? FileImage(File(_coverImage!.path))
-                              : const NetworkImage("https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6") as ImageProvider,
+                          image: _newCoverImage != null
+                              ? FileImage(File(_newCoverImage!.path))
+                              : NetworkImage(user.backgroundURL) as ImageProvider,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -152,9 +151,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                         backgroundColor: Colors.white,
                         child: CircleAvatar(
                           radius: 50,
-                          backgroundImage: _profileImage != null
-                              ? FileImage(File(_profileImage!.path))
-                              : const NetworkImage("https://via.placeholder.com/150") as ImageProvider,
+                          backgroundImage: _newProfileImage != null
+                              ? FileImage(File(_newProfileImage!.path))
+                              : NetworkImage(user.photoURL) as ImageProvider,
                         ),
                       ),
                       Positioned(
@@ -178,39 +177,52 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               ],
             ),
             const SizedBox(height: 40),
+
             _editableTile(
               title: "Full Name",
-              value: _name,
-              onEdit: () => _editField("Name", _name, (val) => setState(() => _name = val)),
+              value: user.name,
+              onEdit: () => _editField("Name", user.name, (val) {
+                vm.user = user.copyWith(name: val);
+                vm.notifyListeners();
+              }),
             ),
             _editableTile(
               title: "Email",
-              value: _email,
-              onEdit: () => _editField("Email", _email, (val) => setState(() => _email = val)),
+              value: user.email,
+              onEdit: () => _editField("Email", user.email, (val) {
+                vm.user = user.copyWith(email: val);
+                vm.notifyListeners();
+              }),
             ),
             _editableTile(
               title: "Date of Birth",
-              value: _birthDate != null
-                  ? "${_birthDate!.day}/${_birthDate!.month}/${_birthDate!.year}"
-                  : "Not set",
-              onEdit: _editBirthDate,
+              value:
+                  "${user.dateOfBirth.day}/${user.dateOfBirth.month}/${user.dateOfBirth.year}",
+              onEdit: () => _editBirthDate(user.dateOfBirth, (val) {
+                vm.user = user.copyWith(dateOfBirth: val);
+                vm.notifyListeners();
+              }),
             ),
+
             const SizedBox(height: 16),
             TextButton(
               onPressed: () {},
               child: const Text("Click here to reset or update your password"),
             ),
+
             const SizedBox(height: 20),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _saveProfile,
+                  onPressed: () => _saveProfile(vm),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: const Text("Save Settings"),
                 ),
