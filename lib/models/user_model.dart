@@ -36,15 +36,15 @@ class UserModel {
       };
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        userId: json['userId'],
-        userName: json['userName'],
-        userEmail: json['userEmail'],
-        DOB: DateTime.parse(json['DOB']),
-        gender: json['gender'],
-        isPrivileged: json['isPrivileged'],
-        accountStatus: json['accountStatus'],
-        createdAt: DateTime.parse(json['createdAt']),
-        phoneNumber: json['phoneNumber'],
+    userId: json['userId'] ?? '',
+    userName: json['userName'] ?? 'Unknown',
+    userEmail: json['userEmail'] ?? '',
+    accountStatus: json['accountStatus'] ?? 'inactive',
+    isPrivileged: json['isPrivileged'] ?? false,
+    createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+    phoneNumber: json['phoneNumber'] ?? '',
+    gender: json['gender'] ?? 'Unspecified',
+    DOB: DateTime.tryParse(json['DOB'] ?? '') ?? DateTime(2000),
+  );
 
-      );
 }
