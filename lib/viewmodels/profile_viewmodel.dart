@@ -6,6 +6,7 @@ class ProfileViewModel extends ChangeNotifier {
   UserModel? user;
   bool isLoading = false;
 
+  /// Fetch user data using Firestore
   Future<void> fetchUserProfile(String userId) async {
     isLoading = true;
     notifyListeners();
@@ -13,7 +14,7 @@ class ProfileViewModel extends ChangeNotifier {
     try {
       final doc = await FirebaseFirestore.instance.collection('profile').doc(userId).get();
       if (doc.exists) {
-        user = UserModel.fromMap(doc.data()!);
+        user = UserModel.fromJson(doc.data()!);
       }
     } catch (e) {
       debugPrint("❌ Error fetching user profile: $e");
@@ -23,14 +24,20 @@ class ProfileViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> updateUserProfile(UserModel updated) async {
+  /// Optional: Fetch current user with hardcoded userId
+  Future<void> fetchCurrentUser() async {
+    await fetchUserProfile("1"); // 🔁 Replace with actual auth.uid if needed
+  }
+
+  /// Update Firestore with new data and update local state
+  Future<void> updateUserProfile(UserModel updatedUser) async {
     try {
       await FirebaseFirestore.instance
           .collection('profile')
-          .doc(updated.userId)
-          .update(updated.toMap());
+          .doc(updatedUser.userId)
+          .update(updatedUser.toJson());
 
-      user = updated;
+      user = updatedUser;
       notifyListeners();
     } catch (e) {
       debugPrint("❌ Error updating user profile: $e");

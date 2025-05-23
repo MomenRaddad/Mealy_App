@@ -65,6 +65,7 @@ ios/.dart_tool/
 macos/
 linux/
 ios/
+windows/
 # Web related
 web/.dart_tool/
 web/build/

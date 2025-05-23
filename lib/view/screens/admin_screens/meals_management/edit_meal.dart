@@ -1,39 +1,63 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meal_app/models/meal_model.dart';
+import 'package:meal_app/view/screens/admin_screens/add_meal/add_ingredient_button.dart';
+import 'package:meal_app/view/screens/admin_screens/add_meal/ingredients_list.dart';
+import 'package:meal_app/view/screens/admin_screens/add_meal/meal_image_picker.dart';
+import 'package:meal_app/view/screens/admin_screens/add_meal/meal_info_fields.dart';
+import 'package:meal_app/view/screens/admin_screens/add_meal/steps_field.dart';
 import 'package:provider/provider.dart';
+import 'package:meal_app/models/meal_model.dart';
+import 'package:meal_app/viewmodels/edit_meal_viewmodel.dart';
 import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/utils/network_utils.dart';
 import 'package:meal_app/utils/size_extensions.dart';
-import 'package:meal_app/viewmodels/add_meal_viewmodel.dart';
-import 'meal_image_picker.dart';
-import 'meal_info_fields.dart';
-import 'ingredients_list.dart';
-import 'add_ingredient_button.dart';
-import 'steps_field.dart';
 
-class AddMealScreen extends StatefulWidget {
-  const AddMealScreen({super.key});
+class EditMealScreen extends StatefulWidget {
+  final MealModel meal;
+
+  const EditMealScreen({super.key, required this.meal});
 
   @override
-  State<AddMealScreen> createState() => _AddMealScreenState();
+  State<EditMealScreen> createState() => _EditMealScreenState();
 }
 
-class _AddMealScreenState extends State<AddMealScreen> {
+class _EditMealScreenState extends State<EditMealScreen> {
   final _formKey = GlobalKey<FormState>();
   final _mealNameController = TextEditingController();
   final _caloriesController = TextEditingController();
   final _stepsController = TextEditingController();
 
   File? _selectedImage;
-  CuisineType selectedCuisine = CuisineType.italian;
-  DurationType selectedDuration = DurationType.min30to60;
-  DietaryType selectedDietType = DietaryType.regular;
-  MealDifficulty selectedDifficulty = MealDifficulty.easy;
-  List<Map<String, String>> ingredients = [
-    {'name': '', 'unit': 'g', 'quantity': ''},
-  ];
+  late CuisineType selectedCuisine;
+  late DurationType selectedDuration;
+  late DietaryType selectedDietType;
+  late MealDifficulty selectedDifficulty;
+  late List<Map<String, String>> ingredients;
+
+  @override
+  void initState() {
+    super.initState();
+    final meal = widget.meal;
+    _mealNameController.text = meal.name;
+    _caloriesController.text = meal.calories.toString();
+    _stepsController.text = meal.steps;
+    selectedCuisine = meal.cuisine;
+    selectedDuration = meal.duration;
+    selectedDietType = meal.dietaryType;
+    selectedDifficulty = meal.difficulty;
+
+    ingredients =
+        meal.ingredients
+            .map(
+              (ing) => {
+                'name': ing.name,
+                'quantity': ing.quantity,
+                'unit': ing.unit.toString().split('.').last,
+              },
+            )
+            .toList();
+  }
 
   void _pickImage() async {
     final pickedFile = await ImagePicker().pickImage(
@@ -58,7 +82,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
     setState(() => ingredients.removeAt(index));
   }
 
-  Future<void> _handleSave(AddMealViewModel viewModel) async {
+  Future<void> _handleSave(EditMealViewModel viewModel) async {
     if (!(_formKey.currentState?.validate() ?? false)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Please fill all required fields')),
@@ -80,7 +104,8 @@ class _AddMealScreenState extends State<AddMealScreen> {
       return;
     }
 
-    await viewModel.addMeal(
+    await viewModel.updateMeal(
+      meal: widget.meal,
       name: _mealNameController.text,
       cuisine: selectedCuisine.toString().split('.').last,
       duration: selectedDuration.toString().split('.').last,
@@ -104,13 +129,13 @@ class _AddMealScreenState extends State<AddMealScreen> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => AddMealViewModel(),
-      child: Consumer<AddMealViewModel>(
+      create: (_) => EditMealViewModel(),
+      child: Consumer<EditMealViewModel>(
         builder: (context, viewModel, _) {
           return Scaffold(
             backgroundColor: AppColors.background,
             appBar: AppBar(
-              title: const Text('Add Meal'),
+              title: const Text('Edit Meal'),
               leading: IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () => Navigator.of(context).pop(),
@@ -139,6 +164,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                       selectedImage: _selectedImage,
                       onPickImage: _pickImage,
                       defaultAsset: 'assets/images/default_meal.jpg',
+                      initialImageUrl: widget.meal.photoUrl,
                     ),
                     const SizedBox(height: 20),
                     MealInfoFields(

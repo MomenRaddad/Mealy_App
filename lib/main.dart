@@ -41,9 +41,7 @@ class MyApp extends StatelessWidget {
       title: 'Mealy',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeProvider.currentTheme,
-      initialRoute: AppRoutes.accountSelector,
+      initialRoute: AppRoutes.splashScreen,
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

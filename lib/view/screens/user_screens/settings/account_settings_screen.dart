@@ -73,8 +73,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
   Future<void> _saveProfile(ProfileViewModel vm) async {
     final user = vm.user!;
-    String newPhotoURL = user.photoURL;
-    String newBackgroundURL = user.backgroundURL;
+    String newPhotoURL = user.photoURL ?? '';
+    String newBackgroundURL = user.backgroundURL ?? '';
 
     if (_newProfileImage != null) {
       newPhotoURL = await _uploadImageToStorage(_newProfileImage!, 'profile_photos');
@@ -83,12 +83,12 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       newBackgroundURL = await _uploadImageToStorage(_newCoverImage!, 'cover_photos');
     }
 
-    final updated = user.copyWith(
+    final updatedUser = user.copyWith(
       photoURL: newPhotoURL,
       backgroundURL: newBackgroundURL,
     );
 
-    await vm.updateUserProfile(updated);
+    await vm.updateUserProfile(updatedUser);
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Profile saved successfully ✅")),
@@ -124,7 +124,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                         image: DecorationImage(
                           image: _newCoverImage != null
                               ? FileImage(File(_newCoverImage!.path))
-                              : NetworkImage(user.backgroundURL) as ImageProvider,
+                              : (user.backgroundURL?.isNotEmpty == true
+                                  ? NetworkImage(user.backgroundURL!)
+                                  : const AssetImage("assets/images/default_cover.jpg")) as ImageProvider,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -153,7 +155,9 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                           radius: 50,
                           backgroundImage: _newProfileImage != null
                               ? FileImage(File(_newProfileImage!.path))
-                              : NetworkImage(user.photoURL) as ImageProvider,
+                              : (user.photoURL?.isNotEmpty == true
+                                  ? NetworkImage(user.photoURL!)
+                                  : const AssetImage("assets/images/default_user.png")) as ImageProvider,
                         ),
                       ),
                       Positioned(
@@ -176,30 +180,30 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 ),
               ],
             ),
+
             const SizedBox(height: 40),
 
             _editableTile(
               title: "Full Name",
-              value: user.name,
-              onEdit: () => _editField("Name", user.name, (val) {
-                vm.user = user.copyWith(name: val);
+              value: user.userName,
+              onEdit: () => _editField("Name", user.userName, (val) {
+                vm.user = user.copyWith(userName: val);
                 vm.notifyListeners();
               }),
             ),
             _editableTile(
               title: "Email",
-              value: user.email,
-              onEdit: () => _editField("Email", user.email, (val) {
-                vm.user = user.copyWith(email: val);
+              value: user.userEmail,
+              onEdit: () => _editField("Email", user.userEmail, (val) {
+                vm.user = user.copyWith(userEmail: val);
                 vm.notifyListeners();
               }),
             ),
             _editableTile(
               title: "Date of Birth",
-              value:
-                  "${user.dateOfBirth.day}/${user.dateOfBirth.month}/${user.dateOfBirth.year}",
-              onEdit: () => _editBirthDate(user.dateOfBirth, (val) {
-                vm.user = user.copyWith(dateOfBirth: val);
+              value: "${user.DOB.day}/${user.DOB.month}/${user.DOB.year}",
+              onEdit: () => _editBirthDate(user.DOB, (val) {
+                vm.user = user.copyWith(DOB: val);
                 vm.notifyListeners();
               }),
             ),
@@ -209,8 +213,8 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               onPressed: () {},
               child: const Text("Click here to reset or update your password"),
             ),
-
             const SizedBox(height: 20),
+
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: SizedBox(

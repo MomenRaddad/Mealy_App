@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:meal_app/view/screens/Login_Signup/Signup/signup.dart';
 import 'package:meal_app/view/screens/admin_screens/settings/settings_screen.dart';
 import 'package:meal_app/view/screens/switch_account.dart';
+import '../view/screens/Login_Signup/Login/login.dart';
+import '../view/screens/splash_screen/splash_screen.dart';
 import '../view/screens/user_navigation_page.dart';
 import '../view/screens/admin_navigation_page.dart';
 
@@ -9,6 +12,9 @@ import 'package:meal_app/view/screens/user_screens/meals/explore_screen.dart';
 
 class AppRoutes {
   // Route names
+  static const String splashScreen='/splashScreen';
+  static const String login='/login';
+  static const String signup='/signup';
   static const String accountSelector = '/accountSelector';
 
   static const String userNav = '/userNav';
@@ -22,6 +28,12 @@ class AppRoutes {
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case splashScreen:
+        return MaterialPageRoute(builder: (_) => SplashScreen());
+      case login:
+        return MaterialPageRoute(builder: (_) => LoginScreen());
+      case signup:
+        return MaterialPageRoute(builder: (_) => SignUpScreen());
       case accountSelector:
         return MaterialPageRoute(builder: (_) => AccountSelector());
       case userNav:

@@ -19,7 +19,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    Provider.of<ProfileViewModel>(context, listen: false).fetchUserProfile("1"); 
+    Provider.of<ProfileViewModel>(context, listen: false).fetchCurrentUser(); // ✅ updated
   }
 
   Future<void> _pickImage() async {
@@ -55,7 +55,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(user.backgroundURL),
+                        image: NetworkImage(user.backgroundURL ?? ''),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -73,7 +73,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             radius: 50,
                             backgroundImage: _profileImage != null
                                 ? FileImage(File(_profileImage!.path))
-                                : NetworkImage(user.photoURL) as ImageProvider,
+                                : (user.photoURL != null && user.photoURL!.isNotEmpty
+                                    ? NetworkImage(user.photoURL!)
+                                    : const AssetImage("assets/images/default_user.png")) as ImageProvider,
                           ),
                         ),
                         Positioned(
@@ -104,7 +106,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 4),
               Text(
-                user.name,
+                user.userName,
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
@@ -112,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ),
               ),
               Text(
-                user.email,
+                user.userEmail,
                 style: const TextStyle(
                   fontSize: 14,
                   color: AppColors.textSecondary,
@@ -120,7 +122,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
               const SizedBox(height: 30),
 
-              // Settings Tiles
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
@@ -151,7 +152,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const SizedBox(height: 30),
 
-              // Logout Button
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SizedBox(

@@ -2,93 +2,90 @@ enum AccountStatus { active, inactive }
 
 class UserModel {
   final String userId;
-  final String name;
-  final String email;
-  final String password;
-  final bool privilegedUser;
-  final DateTime dateOfBirth;
+  final String userName;
+  final String userEmail;
+  final DateTime DOB;
   final String gender;
-  final DateTime createdAt;
+  final bool isPrivileged;
   final AccountStatus accountStatus;
-  final Map<String, String> favoriteMeals; 
-  final String photoURL;         
-  final String backgroundURL;    
+  final DateTime createdAt;
+  final String phoneNumber;
+  final String? photoURL;       
+  final String? backgroundURL;  
 
   UserModel({
     required this.userId,
-    required this.name,
-    required this.email,
-    required this.password,
-    required this.privilegedUser,
-    required this.dateOfBirth,
+    required this.userName,
+    required this.userEmail,
+    required this.DOB,
     required this.gender,
-    required this.createdAt,
+    required this.isPrivileged,
     required this.accountStatus,
-    required this.favoriteMeals,
-    required this.photoURL,
-    required this.backgroundURL,
+    required this.createdAt,
+    required this.phoneNumber,
+    this.photoURL,
+    this.backgroundURL,
   });
 
-  Map<String, dynamic> toMap() => {
+ 
+  Map<String, dynamic> toJson() => {
         'userId': userId,
-        'name': name,
-        'email': email,
-        'password': password,
-        'privilegedUser': privilegedUser,
-        'dateOfBirth': dateOfBirth.toIso8601String(),
+        'userName': userName,
+        'userEmail': userEmail,
+        'DOB': DOB.toIso8601String(),
         'gender': gender,
-        'createdAt': createdAt.toIso8601String(),
+        'isPrivileged': isPrivileged,
         'accountStatus': accountStatus.name,
-        'favoriteMeals': favoriteMeals,
-        'photoURL': photoURL,             
-        'backgroundURL': backgroundURL,    
+        'createdAt': createdAt.toIso8601String(),
+        'phoneNumber': phoneNumber,
+        if (photoURL != null) 'photoURL': photoURL,
+        if (backgroundURL != null) 'backgroundURL': backgroundURL,
       };
 
-  factory UserModel.fromMap(Map<String, dynamic> map) => UserModel(
-        userId: map['userId'] ?? '',
-        name: map['name'] ?? '',
-        email: map['email'] ?? '',
-        password: map['password'] ?? '',
-        privilegedUser: map['privilegedUser'] ?? false,
-        dateOfBirth: DateTime.parse(map['dateOfBirth']),
-        gender: map['gender'] ?? '',
-        createdAt: DateTime.parse(map['createdAt']),
+ 
+  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
+        userId: json['userId'] ?? '',
+        userName: json['userName'] ?? 'Unknown',
+        userEmail: json['userEmail'] ?? '',
         accountStatus: AccountStatus.values.firstWhere(
-          (e) => e.name == map['accountStatus'],
-          orElse: () => AccountStatus.active,
+          (e) => e.name == json['accountStatus'],
+          orElse: () => AccountStatus.inactive,
         ),
-        favoriteMeals: Map<String, String>.from(map['favoriteMeals'] ?? {}),
-        photoURL: map['photoURL'] ?? '',             
-        backgroundURL: map['backgroundURL'] ?? '',   
+        isPrivileged: json['isPrivileged'] ?? false,
+        createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+        phoneNumber: json['phoneNumber'] ?? '',
+        gender: json['gender'] ?? 'Unspecified',
+        DOB: DateTime.tryParse(json['DOB'] ?? '') ?? DateTime(2000),
+        photoURL: json['photoURL'],
+        backgroundURL: json['backgroundURL'],
       );
-      UserModel copyWith({
-  String? userId,
-  String? name,
-  String? email,
-  String? password,
-  bool? privilegedUser,
-  DateTime? dateOfBirth,
-  String? gender,
-  DateTime? createdAt,
-  AccountStatus? accountStatus,
-  Map<String, String>? favoriteMeals,
-  String? photoURL,
-  String? backgroundURL,
-}) {
-  return UserModel(
-    userId: userId ?? this.userId,
-    name: name ?? this.name,
-    email: email ?? this.email,
-    password: password ?? this.password,
-    privilegedUser: privilegedUser ?? this.privilegedUser,
-    dateOfBirth: dateOfBirth ?? this.dateOfBirth,
-    gender: gender ?? this.gender,
-    createdAt: createdAt ?? this.createdAt,
-    accountStatus: accountStatus ?? this.accountStatus,
-    favoriteMeals: favoriteMeals ?? this.favoriteMeals,
-    photoURL: photoURL ?? this.photoURL,
-    backgroundURL: backgroundURL ?? this.backgroundURL,
-  );
-}
 
+ 
+  UserModel copyWith({
+    String? userId,
+    String? userName,
+    String? userEmail,
+    DateTime? DOB,
+    String? gender,
+    bool? isPrivileged,
+    AccountStatus? accountStatus,
+    DateTime? createdAt,
+    String? phoneNumber,
+    String? photoURL,
+    String? backgroundURL,
+  }) {
+    return UserModel(
+      userId: userId ?? this.userId,
+      userName: userName ?? this.userName,
+      userEmail: userEmail ?? this.userEmail,
+      DOB: DOB ?? this.DOB,
+      gender: gender ?? this.gender,
+      isPrivileged: isPrivileged ?? this.isPrivileged,
+      accountStatus: accountStatus ?? this.accountStatus,
+      createdAt: createdAt ?? this.createdAt,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      photoURL: photoURL ?? this.photoURL,
+      backgroundURL: backgroundURL ?? this.backgroundURL,
+    );
+  }
 }
