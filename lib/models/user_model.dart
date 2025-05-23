@@ -27,7 +27,6 @@ class UserModel {
     this.backgroundURL,
   });
 
- 
   Map<String, dynamic> toJson() => {
         'userId': userId,
         'userName': userName,
@@ -42,7 +41,6 @@ class UserModel {
         if (backgroundURL != null) 'backgroundURL': backgroundURL,
       };
 
- 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
         userId: json['userId'] ?? '',
         userName: json['userName'] ?? 'Unknown',
@@ -60,7 +58,6 @@ class UserModel {
         backgroundURL: json['backgroundURL'],
       );
 
- 
   UserModel copyWith({
     String? userId,
     String? userName,

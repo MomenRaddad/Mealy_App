@@ -24,12 +24,11 @@ class ProfileViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  /// Optional: Fetch current user with hardcoded userId
   Future<void> fetchCurrentUser() async {
-    await fetchUserProfile("1"); // 🔁 Replace with actual auth.uid if needed
+    await fetchUserProfile("1"); 
   }
 
-  /// Update Firestore with new data and update local state
+
   Future<void> updateUserProfile(UserModel updatedUser) async {
     try {
       await FirebaseFirestore.instance
