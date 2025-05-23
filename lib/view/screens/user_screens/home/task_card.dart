@@ -10,26 +10,46 @@ class TaskCard extends StatelessWidget {
   final bool enableReminder;
   final VoidCallback? onEdit;
   final VoidCallback? onDelete;
+  final bool isDone;
+  final ValueChanged<bool>? onToggleDone;
+
 
   const TaskCard({
     super.key,
     required this.title,
     required this.time,
     required this.category,
+    required this.isDone,
     required this.enableReminder,
     this.onEdit,
-    this.onDelete, required onToggleDone,
+    this.onDelete,
+    this.onToggleDone,
+
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
-      child: ListTile(
-        leading: Icon(
-          enableReminder ? Icons.alarm_on : Icons.alarm_off,
-          color: enableReminder ? Colors.blue : Colors.grey,
+    child: ListTile(
+    // leading: Icon(
+    // isDone ? Icons.check_box : Icons.check_box_outline_blank,
+    // color: isDone ? Colors.green : Colors.grey,
+    // ),
+      leading: IconButton(
+        icon: Icon(
+          isDone ? Icons.check_box : Icons.check_box_outline_blank,
+          color: isDone ? Colors.green : Colors.grey,
         ),
+        onPressed: () {
+          if (onToggleDone != null) {
+            onToggleDone!(!isDone);
+          }
+        },
+
+
+
+    ),
         title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
         subtitle: Text("$category  •  $time"),
         trailing: Row(

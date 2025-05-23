@@ -54,7 +54,9 @@ class TasksScreen extends StatelessWidget {
                   time: formattedTime,
                   //isDone: task.enableReminder,
                   category: task.taskCategory,
+                  isDone:task.enableReminder,
                   enableReminder: task.enableReminder,
+
                   onDelete: () => TaskViewModel().deleteTask(user.uid, task.id),
                   onEdit: () {
                     Navigator.push(
@@ -63,9 +65,14 @@ class TasksScreen extends StatelessWidget {
                         builder: (_) => EditTaskScreen(task: task),
                       ),
                     );
-                  },
+                  }, onToggleDone: (val) {
+                  TaskViewModel().updateTask(
+                    user.uid,
+                    task.copyWith(enableReminder: val),
+                  );
+                },
 
-                  onToggleDone: null,
+                 // onToggleDone: null,
                 );
               }).toList(),
           ],

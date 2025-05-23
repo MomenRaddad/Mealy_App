@@ -13,7 +13,21 @@ class TaskModel {
     required this.taskTime,
     required this.enableReminder,
   });
-
+  TaskModel copyWith({
+    String? id,
+    String? title,
+    String? taskCategory,
+    DateTime? taskTime,
+    bool? enableReminder,
+  }) {
+    return TaskModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      taskCategory: taskCategory ?? this.taskCategory,
+      taskTime: taskTime ?? this.taskTime,
+      enableReminder: enableReminder ?? this.enableReminder,
+    );
+  }
   factory TaskModel.fromFirestore(Map<String, dynamic> json, String id) {
     return TaskModel(
       id: id,
@@ -32,5 +46,7 @@ class TaskModel {
       'enableReminder': enableReminder,
     };
   }
+
+
 }
 
