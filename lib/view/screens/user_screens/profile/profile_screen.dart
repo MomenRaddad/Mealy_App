@@ -10,17 +10,22 @@ class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
   XFile? _profileImage;
 
-  @override
-  void initState() {
-    super.initState();
-    Provider.of<ProfileViewModel>(context, listen: false).fetchCurrentUser(); // ✅ updated
-  }
+@override
+void initState() {
+  super.initState();
+
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final profileVM = Provider.of<ProfileViewModel>(context, listen: false);
+    profileVM.fetchUserProfile(); 
+  });
+}
+
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -47,6 +52,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+              
               Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -55,7 +61,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(user.backgroundURL ?? ''),
+                        image: user.backgroundURL != null && user.backgroundURL!.isNotEmpty
+                            ? NetworkImage(user.backgroundURL!)
+                            : const AssetImage("assets/images/") as ImageProvider,
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -79,8 +87,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                         ),
                         Positioned(
-                          right: 4,
                           bottom: 4,
+                          right: 4,
                           child: GestureDetector(
                             onTap: _pickImage,
                             child: Container(
@@ -100,25 +108,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
 
               const SizedBox(height: 60),
-              const Text(
-                "Hey! I'm",
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-              ),
+              const Text("Hey! I'm", style: TextStyle(color: AppColors.textSecondary)),
               const SizedBox(height: 4),
               Text(
                 user.userName,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               Text(
                 user.userEmail,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
+                style: const TextStyle(color: AppColors.textSecondary),
               ),
               const SizedBox(height: 30),
 
@@ -126,32 +124,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    _profileTile(
-                      icon: Icons.settings,
-                      label: "Account Settings",
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
-                        );
-                      },
-                    ),
-                    _profileTile(
-                      icon: Icons.favorite,
-                      label: "Favorites",
-                      onTap: () {},
-                    ),
-                    _profileTile(
-                      icon: Icons.mail_outline,
-                      label: "Contact Us",
-                      onTap: () {},
-                    ),
+                    _tile(icon: Icons.settings, label: "Account Settings", onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
+                      );
+                    }),
+                    _tile(icon: Icons.favorite, label: "Favorites", onTap: () {}),
+                    _tile(icon: Icons.mail_outline, label: "Contact Us", onTap: () {}),
                   ],
                 ),
               ),
 
               const SizedBox(height: 30),
-
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SizedBox(
@@ -165,9 +150,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
                 ),
@@ -180,11 +163,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _profileTile({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
+  Widget _tile({required IconData icon, required String label, required VoidCallback onTap}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(

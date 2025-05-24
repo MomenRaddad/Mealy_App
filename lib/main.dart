@@ -8,6 +8,7 @@ import 'provider/theme_provider.dart';
 import 'package:meal_app/view/screens/user_screens/meals/explore_viewmodel.dart';
 import 'package:meal_app/view/screens/user_screens/details/meal_details_viewmodel.dart';
 import 'package:meal_app/viewmodels/visited_meals_viewmodel.dart';
+import 'package:meal_app/viewmodels/profile_viewmodel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,7 +21,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => ExploreViewModel()), 
          ChangeNotifierProvider(create: (_) => MealDetailsViewModel()),
          ChangeNotifierProvider(create: (_) => VisitedMealsViewModel()),
-
+         ChangeNotifierProvider(create: (_) => ProfileViewModel()),
 
               
 

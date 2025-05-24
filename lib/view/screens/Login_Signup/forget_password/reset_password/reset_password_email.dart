@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:meal_app/core/colors.dart';
-import 'package:meal_app/view/screens/Login_Signup/forget_password/reset_password/reset_password_code.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ResetPasswordEmail extends StatefulWidget {
@@ -152,7 +151,7 @@ class _ResetPasswordEmailState extends State<ResetPasswordEmail> {
       );
 
     } on FirebaseAuthException catch (e) {
-      Navigator.pop(context); // Close loading dialog if error
+      Navigator.pop(context); 
       _showError(e.code == 'user-not-found'
         ? "No account found for this email."
         : e.message ?? "Something went wrong.");

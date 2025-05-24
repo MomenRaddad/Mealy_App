@@ -42,7 +42,7 @@ class UserModel {
       };
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        userId: json['userId'] ?? '',
+        userId: json['userId']?.toString() ?? '',
         userName: json['userName'] ?? 'Unknown',
         userEmail: json['userEmail'] ?? '',
         accountStatus: AccountStatus.values.firstWhere(

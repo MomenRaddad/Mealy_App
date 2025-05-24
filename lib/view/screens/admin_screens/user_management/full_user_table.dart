@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/models/user_model.dart';
 import 'package:meal_app/view/screens/Login_Signup/Signup/signup.dart';
 import 'package:meal_app/viewmodels/user_view_model.dart';

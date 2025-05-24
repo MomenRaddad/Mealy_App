@@ -2,10 +2,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:meal_app/core/colors.dart';
-import 'package:meal_app/viewmodels/profile_viewmodel.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
+
+import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/viewmodels/profile_viewmodel.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -66,9 +67,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
     );
-    if (picked != null) {
-      onSave(picked);
-    }
+    if (picked != null) onSave(picked);
   }
 
   Future<void> _saveProfile(ProfileViewModel vm) async {
@@ -88,7 +87,7 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       backgroundURL: newBackgroundURL,
     );
 
-    await vm.updateUserProfile(updatedUser);
+
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Profile saved successfully ✅")),
@@ -111,7 +110,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Cover + Profile Image
             Stack(
               clipBehavior: Clip.none,
               children: [
@@ -180,7 +178,6 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 ),
               ],
             ),
-
             const SizedBox(height: 40),
 
             _editableTile(
@@ -199,14 +196,15 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                 vm.notifyListeners();
               }),
             ),
-            _editableTile(
-              title: "Date of Birth",
-              value: "${user.DOB.day}/${user.DOB.month}/${user.DOB.year}",
-              onEdit: () => _editBirthDate(user.DOB, (val) {
-                vm.user = user.copyWith(DOB: val);
-                vm.notifyListeners();
-              }),
-            ),
+            if (user.DOB != null)
+              _editableTile(
+                title: "Date of Birth",
+                value: "${user.DOB!.day}/${user.DOB!.month}/${user.DOB!.year}",
+                onEdit: () => _editBirthDate(user.DOB, (val) {
+                  vm.user = user.copyWith(DOB: val);
+                  vm.notifyListeners();
+                }),
+              ),
 
             const SizedBox(height: 16),
             TextButton(
