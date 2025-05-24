@@ -22,7 +22,7 @@ final List<Meal> meals = [
   Meal(
     title: 'Fruit-topped pancake',
     imageUrl:
-        'https://hips.hearstapps.com/hmg-prod/images/quick-lunch-ideas-660c41f814e0e.jpeg?crop=1.00xw:0.502xh;0,0.277xh&resize=1200:*',
+        'https://firebasestorage.googleapis.com/v0/b/mealyapp-86001.firebasestorage.app/o/meal_images%2F1747758977882.jpg?alt=media&token=745ab260-ce69-4f00-bd5a-d9369640e902',
     type: 'Breakfast',
     timeAndCal: '10 min • 300 kcal',
     likes: 75,

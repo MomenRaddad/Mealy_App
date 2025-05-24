@@ -11,20 +11,20 @@ class DailyVisitsChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+    final max = visitsPerDay.reduce((a, b) => a > b ? a : b);
     return SizedBox(
       height: context.hp(200),
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceBetween,
-          maxY: visitsPerDay.reduce((a, b) => a > b ? a : b) + 1,
+          maxY: max,
           barGroups: _buildData(size),
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
                 showTitles: true,
                 reservedSize: 30,
-                interval: 4,
+                interval: max / 5,
                 getTitlesWidget:
                     (value, meta) => Text(
                       value.toInt().toString(),
