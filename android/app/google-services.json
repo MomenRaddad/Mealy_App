@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "636947517093",
+    "project_id": "mealyapp-86001",
+    "storage_bucket": "mealyapp-86001.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:636947517093:android:61227de527cc37708fc74c",
+        "android_client_info": {
+          "package_name": "com.example.meal_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlEjfNurtr5kDr1VotLqh2jubhSo2FUg0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
