@@ -25,3 +25,7 @@ class AdminMealsViewModel extends ChangeNotifier {
     });
   }
 }
+
+void deleteMeal(MealModel meal) {
+  FirebaseFirestore.instance.collection('meals').doc(meal.id).delete();
+}
