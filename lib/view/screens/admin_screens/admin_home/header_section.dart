@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/models/user_session.dart';
 import 'package:meal_app/utils/size_extensions.dart';
 
 class HeaderSection extends StatelessWidget {
@@ -32,15 +33,8 @@ class HeaderSection extends StatelessWidget {
         ),
         SizedBox(width: context.wp(20)),
         Text(
-          "Mo'men Raddad",
+          UserSession.name ?? 'Unknown User',
           style: Theme.of(context).textTheme.headlineMedium,
-
-          // TextStyle(
-          //   fontSize: Theme.of(context).textTheme.headlineMedium!.fontSize,
-          //   fontFamily: 'Lato',
-          //   fontWeight: FontWeight.bold,
-          //   color: AppColors.textPrimary,
-          // ),
         ),
         Spacer(),
         IconButton(
