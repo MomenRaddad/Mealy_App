@@ -30,7 +30,7 @@ class MealsFilterBar extends StatelessWidget {
         SizedBox(height: context.hp(3)),
         FilterChipList(
           filters: filters,
-          initiallySelected: selectedFilter,
+          initiallySelected: "All",
           onSelected: onFilterChanged,
         ),
       ],

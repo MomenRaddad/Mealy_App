@@ -14,13 +14,15 @@ class MealsManagementBody extends StatefulWidget {
 
 class _MealsManagementBodyState extends State<MealsManagementBody> {
   final List<String> filters = ["All", "Easy", "Simple", "Medium", "Difficult"];
-  String selectedFilter = "All";
+  String selectedFilter = "all";
   String searchQuery = "";
 
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<AdminMealsViewModel>(context);
-
+    if (viewModel.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
     if (viewModel.meals.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         viewModel.listenToMeals();
@@ -30,10 +32,6 @@ class _MealsManagementBodyState extends State<MealsManagementBody> {
       );
     }
 
-    if (viewModel.isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
     final filteredMeals =
         viewModel.meals.where((meal) {
           final matchesSearch = meal.name.toLowerCase().contains(
@@ -41,7 +39,9 @@ class _MealsManagementBodyState extends State<MealsManagementBody> {
           );
           final matchesFilter =
               selectedFilter == "all" ||
-              meal.difficulty.name.toLowerCase() == selectedFilter;
+              meal.difficulty.name.toLowerCase() ==
+                  selectedFilter.toLowerCase();
+
           return matchesSearch && matchesFilter;
         }).toList();
 

@@ -27,6 +27,7 @@ class _EditMealScreenState extends State<EditMealScreen> {
   final _mealNameController = TextEditingController();
   final _caloriesController = TextEditingController();
   final _stepsController = TextEditingController();
+  bool _isPicking = false;
 
   File? _selectedImage;
   late CuisineType selectedCuisine;
@@ -60,11 +61,22 @@ class _EditMealScreenState extends State<EditMealScreen> {
   }
 
   void _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      setState(() => _selectedImage = File(pickedFile.path));
+    if (_isPicking) return;
+    _isPicking = true;
+
+    try {
+      final pickedFile = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+    } finally {
+      _isPicking = false;
     }
   }
 
