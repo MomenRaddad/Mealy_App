@@ -26,6 +26,12 @@ class AdminMealsViewModel extends ChangeNotifier {
   }
 }
 
-void deleteMeal(MealModel meal) {
-  FirebaseFirestore.instance.collection('meals').doc(meal.id).delete();
+Future<bool> deleteMeal(MealModel meal) async {
+  try {
+    await FirebaseFirestore.instance.collection('meals').doc(meal.id).delete();
+    return true;
+  } catch (e) {
+    print("Failed to delete meal: $e");
+    return false;
+  }
 }

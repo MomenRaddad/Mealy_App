@@ -25,9 +25,9 @@ class _AddMealScreenState extends State<AddMealScreen> {
   final _mealNameController = TextEditingController();
   final _caloriesController = TextEditingController();
   final _stepsController = TextEditingController();
+  File? _selectedImage;
   bool _isPicking = false;
 
-  File? _selectedImage;
   CuisineType selectedCuisine = CuisineType.italian;
   DurationType selectedDuration = DurationType.min30to60;
   DietaryType selectedDietType = DietaryType.regular;
@@ -35,6 +35,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
   List<Map<String, String>> ingredients = [
     {'name': '', 'unit': 'g', 'quantity': ''},
   ];
+
   void _pickImage() async {
     if (_isPicking) return;
     _isPicking = true;
@@ -90,21 +91,65 @@ class _AddMealScreenState extends State<AddMealScreen> {
       );
       return;
     }
+    viewModel.isLoading = true;
+    if (viewModel.isLoading) {
+      print("*************************83***********************");
 
-    await viewModel.addMeal(
-      name: _mealNameController.text,
-      cuisine: selectedCuisine.toString().split('.').last,
-      duration: selectedDuration.toString().split('.').last,
-      calories: _caloriesController.text,
-      dietaryType: selectedDietType.toString().split('.').last,
-      ingredients: ingredients,
-      steps: _stepsController.text,
-      imageFile: _selectedImage,
-      difficulty: selectedDifficulty.toString().split('.').last,
-    );
+      print("Loading is true");
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (_) => const AlertDialog(
+              content: Row(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(width: 16),
+                  Text("Saving meal..."),
+                ],
+              ),
+            ),
+      );
+      await viewModel.addMeal(
+        name: _mealNameController.text,
+        cuisine: selectedCuisine.toString().split('.').last,
+        duration: selectedDuration.toString().split('.').last,
+        calories: _caloriesController.text,
+        dietaryType: selectedDietType.toString().split('.').last,
+        ingredients: ingredients,
+        steps: _stepsController.text,
+        imageFile: _selectedImage,
+        difficulty: selectedDifficulty.toString().split('.').last,
+      );
+      if (Navigator.canPop(context)) {
+        Navigator.of(context).pop();
+      }
+      viewModel.isLoading = false;
+    }
 
     if (viewModel.errorMessage == null) {
-      Navigator.of(context).pop();
+      print("*************************113***********************");
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (_) => const AlertDialog(
+              content: Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green),
+                  SizedBox(width: 12),
+                  Text("Meal saved successfully!"),
+                ],
+              ),
+            ),
+      );
+
+      Future.delayed(const Duration(seconds: 2)).then((_) {
+        if (Navigator.canPop(context)) {
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        }
+      });
     } else {
       ScaffoldMessenger.of(
         context,
@@ -129,13 +174,13 @@ class _AddMealScreenState extends State<AddMealScreen> {
               actions: [
                 IconButton(
                   icon: const Icon(Icons.save),
+
                   onPressed: () async {
                     final isConnected =
                         await NetworkUtils.checkInternetAndShowDialog(context);
                     if (!isConnected) return;
-                    if (!viewModel.isLoading) {
-                      await _handleSave(viewModel);
-                    }
+
+                    await _handleSave(viewModel);
                   },
                 ),
               ],
@@ -149,7 +194,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                     MealImagePicker(
                       selectedImage: _selectedImage,
                       onPickImage: _pickImage,
-                      defaultAsset: 'assets/images/default_meal.jpg',
+                      defaultAsset: 'assets/images/images.png',
                     ),
                     const SizedBox(height: 20),
                     MealInfoFields(
@@ -194,8 +239,8 @@ class _AddMealScreenState extends State<AddMealScreen> {
                                   : null,
                       hintText: 'Enter the steps for preparing the meal...',
                     ),
-                    if (viewModel.isLoading)
-                      const Center(child: CircularProgressIndicator()),
+                    // if (viewModel.isLoading)
+                    //   const Center(child: CircularProgressIndicator()),
                   ],
                 ),
               ),
