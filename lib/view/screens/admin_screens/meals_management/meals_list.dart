@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:meal_app/models/meal_model.dart';
+import 'package:meal_app/utils/navigation_utils.dart';
 import 'package:meal_app/view/components/admin_components/meal_card.dart';
 import 'package:meal_app/view/screens/admin_screens/meals_management/edit_meal.dart';
 import 'package:meal_app/utils/size_extensions.dart';
+import 'package:meal_app/view/screens/user_screens/home/dialogs/confirm_delete_dialog.dart';
 import 'package:meal_app/viewmodels/AdminMealsViewModel.dart';
+import 'package:provider/provider.dart';
 
 class MealsList extends StatelessWidget {
   final List<MealModel> filteredMeals;
@@ -37,9 +40,22 @@ class MealsList extends StatelessWidget {
               color: Colors.red,
               child: const Icon(Icons.delete, color: Colors.white),
             ),
-            onDismissed: (direction) {
-              deleteMeal(meal);
+            confirmDismiss: (direction) async {
+              final confirmed = await showDialog<bool>(
+                context: context,
+                barrierDismissible: false,
+                builder: (_) {
+                  return ConfirmDeleteDialog(
+                    onConfirm: () {
+                      deleteMeal(meal);
+                    },
+                  );
+                },
+              );
+              // User dismissed the dialog
+              return confirmed == true;
             },
+            // onDismissed: (direction) {},
             child: MealCard(
               title: meal.name,
               imageUrl: meal.photoUrl,
@@ -49,9 +65,9 @@ class MealsList extends StatelessWidget {
               chefs: meal.chefs,
               rating: meal.rating,
               onEdit: () {
-                Navigator.push(
+                AppNavigator.pushWithoutNavBar(
                   context,
-                  MaterialPageRoute(builder: (_) => EditMealScreen(meal: meal)),
+                  EditMealScreen(meal: meal),
                 );
               },
             ),

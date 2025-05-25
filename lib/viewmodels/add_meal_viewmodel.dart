@@ -35,9 +35,9 @@ class AddMealViewModel extends ChangeNotifier {
   Future<String> uploadDefaultImage() async {
     print('uploadDefaultImage called');
     try {
-      final byteData = await rootBundle.load('assets/images/default_meal.jpg');
+      final byteData = await rootBundle.load('assets/images/images.png');
       final tempDir = Directory.systemTemp;
-      final tempFile = File('${tempDir.path}/default_meal.jpg');
+      final tempFile = File('${tempDir.path}/images.png');
       await tempFile.writeAsBytes(byteData.buffer.asUint8List());
       return await uploadImage(tempFile);
     } catch (e, stack) {

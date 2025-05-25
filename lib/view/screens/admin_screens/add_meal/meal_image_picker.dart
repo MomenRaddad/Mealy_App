@@ -38,7 +38,7 @@ class MealImagePicker extends StatelessWidget {
                         fit: BoxFit.cover,
                       )
                       : Image.asset(
-                        defaultAsset ?? 'assets/images/default_meal.jpg',
+                        defaultAsset ?? 'assets/images/images.png',
                         height: 200,
                         width: double.infinity,
                         fit: BoxFit.cover,

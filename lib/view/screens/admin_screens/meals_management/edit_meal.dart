@@ -115,22 +115,67 @@ class _EditMealScreenState extends State<EditMealScreen> {
       );
       return;
     }
+    viewModel.isLoading = true;
+    if (viewModel.isLoading) {
+      print("*************************120***********************");
 
-    await viewModel.updateMeal(
-      meal: widget.meal,
-      name: _mealNameController.text,
-      cuisine: selectedCuisine.toString().split('.').last,
-      duration: selectedDuration.toString().split('.').last,
-      calories: _caloriesController.text,
-      dietaryType: selectedDietType.toString().split('.').last,
-      ingredients: ingredients,
-      steps: _stepsController.text,
-      imageFile: _selectedImage,
-      difficulty: selectedDifficulty.toString().split('.').last,
-    );
+      print("Loading is true");
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (_) => const AlertDialog(
+              content: Row(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(width: 16),
+                  Text("Saving update..."),
+                ],
+              ),
+            ),
+      );
+      await viewModel.updateMeal(
+        meal: widget.meal,
+        name: _mealNameController.text,
+        cuisine: selectedCuisine.toString().split('.').last,
+        duration: selectedDuration.toString().split('.').last,
+        calories: _caloriesController.text,
+        dietaryType: selectedDietType.toString().split('.').last,
+        ingredients: ingredients,
+        steps: _stepsController.text,
+        imageFile: _selectedImage,
+        difficulty: selectedDifficulty.toString().split('.').last,
+      );
+      if (Navigator.canPop(context)) {
+        Navigator.of(context).pop();
+      }
+      viewModel.isLoading = false;
+    }
 
     if (viewModel.errorMessage == null) {
-      Navigator.of(context).pop();
+      print("*************************168***********************");
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (_) => const AlertDialog(
+              content: Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green),
+                  SizedBox(width: 12),
+                  Text("Meal updated successfully!"),
+                ],
+              ),
+            ),
+      );
+
+      Future.delayed(const Duration(seconds: 2)).then((_) {
+        if (Navigator.canPop(context)) {
+          print("186");
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        }
+      });
     } else {
       ScaffoldMessenger.of(
         context,
@@ -159,9 +204,8 @@ class _EditMealScreenState extends State<EditMealScreen> {
                     final isConnected =
                         await NetworkUtils.checkInternetAndShowDialog(context);
                     if (!isConnected) return;
-                    if (!viewModel.isLoading) {
-                      await _handleSave(viewModel);
-                    }
+
+                    await _handleSave(viewModel);
                   },
                 ),
               ],
@@ -175,7 +219,7 @@ class _EditMealScreenState extends State<EditMealScreen> {
                     MealImagePicker(
                       selectedImage: _selectedImage,
                       onPickImage: _pickImage,
-                      defaultAsset: 'assets/images/default_meal.jpg',
+                      defaultAsset: 'assets/images/images.png',
                       initialImageUrl: widget.meal.photoUrl,
                     ),
                     const SizedBox(height: 20),
