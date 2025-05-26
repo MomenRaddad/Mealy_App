@@ -73,6 +73,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       taskCategory: category,
       taskTime: _taskTime!,
       enableReminder: _enableReminder,
+      isCompleted: false,
     );
 
     try {

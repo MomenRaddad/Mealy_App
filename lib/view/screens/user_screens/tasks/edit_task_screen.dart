@@ -74,7 +74,8 @@ class _EditTaskScreenState extends State<EditTaskScreen> {
       title: title,
       taskCategory: category,
       taskTime: _taskTime,
-      enableReminder: _enableReminder,
+      enableReminder: _enableReminder,  
+      isCompleted: widget.task.isCompleted,    
     );
 
     try {

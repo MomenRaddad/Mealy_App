@@ -1,6 +1,4 @@
-
 import 'package:flutter/material.dart';
-
 import 'dialogs/confirm_delete_dialog.dart';
 
 class TaskCard extends StatelessWidget {
@@ -12,7 +10,6 @@ class TaskCard extends StatelessWidget {
   final VoidCallback? onDelete;
   final bool isDone;
   final ValueChanged<bool>? onToggleDone;
-
 
   const TaskCard({
     super.key,
@@ -32,10 +29,6 @@ class TaskCard extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
     child: ListTile(
-    // leading: Icon(
-    // isDone ? Icons.check_box : Icons.check_box_outline_blank,
-    // color: isDone ? Colors.green : Colors.grey,
-    // ),
       leading: IconButton(
         icon: Icon(
           isDone ? Icons.check_box : Icons.check_box_outline_blank,
@@ -46,11 +39,12 @@ class TaskCard extends StatelessWidget {
             onToggleDone!(!isDone);
           }
         },
-
-
-
     ),
-        title: Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+        title: Text(title, style: TextStyle(
+          fontWeight: FontWeight.bold,
+          decoration: isDone ? TextDecoration.lineThrough : TextDecoration.none,
+          decorationThickness: 2,
+          )),
         subtitle: Text("$category  •  $time"),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
