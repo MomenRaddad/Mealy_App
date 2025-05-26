@@ -9,6 +9,8 @@ import 'package:meal_app/view/screens/admin_screens/admin_home/overview_card.dar
 import 'package:meal_app/view/screens/admin_screens/admin_home/top_meals_section.dart';
 
 class AdminHomeScreen extends StatelessWidget {
+  const AdminHomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;

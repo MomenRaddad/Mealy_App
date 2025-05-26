@@ -19,7 +19,7 @@ class UserManagementScreen extends StatefulWidget {
 
 class _UserManagementScreenState extends State<UserManagementScreen> {
   late UserViewModel vm;
-  String _statusFilter = 'All';
+  final String _statusFilter = 'All';
 
   @override
   void initState() {

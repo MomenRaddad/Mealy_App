@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/core/routes.dart';
-import 'package:meal_app/utils/navigation_utils.dart';
 import 'package:meal_app/utils/size_extensions.dart';
-import 'package:meal_app/view/screens/user_screens/home/reminders_screen.dart';
-import 'package:meal_app/view/screens/user_screens/profile/profile_screen.dart';
 
 class HeaderSection extends StatelessWidget {
   const HeaderSection({super.key});

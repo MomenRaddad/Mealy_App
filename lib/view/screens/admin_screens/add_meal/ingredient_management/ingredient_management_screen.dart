@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:meal_app/models/ingredient_model.dart';
 import 'package:meal_app/view/screens/admin_screens/add_meal/ingredient_management/ingredient_tile.dart';
