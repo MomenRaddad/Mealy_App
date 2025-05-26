@@ -1,9 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:provider/provider.dart';
 import 'package:meal_app/core/colors.dart';
-import 'package:meal_app/viewmodels/profile_viewmodel.dart';
+import 'package:meal_app/models/user_session.dart';
 import 'package:meal_app/view/screens/user_screens/settings/account_settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -16,17 +15,6 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   XFile? _profileImage;
 
-@override
-void initState() {
-  super.initState();
-
-  WidgetsBinding.instance.addPostFrameCallback((_) {
-    final profileVM = Provider.of<ProfileViewModel>(context, listen: false);
-    profileVM.fetchUserProfile(); 
-  });
-}
-
-
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final picked = await picker.pickImage(source: ImageSource.gallery);
@@ -37,22 +25,13 @@ void initState() {
 
   @override
   Widget build(BuildContext context) {
-    final profileVM = Provider.of<ProfileViewModel>(context);
-    final user = profileVM.user;
-
-    if (profileVM.isLoading || user == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
-
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: SafeArea(
         child: SingleChildScrollView(
           child: Column(
             children: [
-              
+            
               Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -61,13 +40,17 @@ void initState() {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: user.backgroundURL != null && user.backgroundURL!.isNotEmpty
-                            ? NetworkImage(user.backgroundURL!)
-                            : const AssetImage("assets/images/") as ImageProvider,
+                        image: UserSession.backgroundURL != null &&
+                                UserSession.backgroundURL!.isNotEmpty
+                            ? NetworkImage(UserSession.backgroundURL!)
+                            : const AssetImage("assets/images/default_background.jpg")
+                                as ImageProvider,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
+
+                
                   Positioned(
                     bottom: -40,
                     left: MediaQuery.of(context).size.width / 2 - 55,
@@ -81,9 +64,11 @@ void initState() {
                             radius: 50,
                             backgroundImage: _profileImage != null
                                 ? FileImage(File(_profileImage!.path))
-                                : (user.photoURL != null && user.photoURL!.isNotEmpty
-                                    ? NetworkImage(user.photoURL!)
-                                    : const AssetImage("assets/images/default_user.png")) as ImageProvider,
+                                : (UserSession.photoURL != null &&
+                                        UserSession.photoURL!.isNotEmpty)
+                                    ? NetworkImage(UserSession.photoURL!)
+                                    : const AssetImage("assets/images/default_user.png")
+                                        as ImageProvider,
                           ),
                         ),
                         Positioned(
@@ -111,25 +96,31 @@ void initState() {
               const Text("Hey! I'm", style: TextStyle(color: AppColors.textSecondary)),
               const SizedBox(height: 4),
               Text(
-                user.userName,
+                UserSession.name ?? 'Guest',
                 style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               Text(
-                user.userEmail,
+                UserSession.email ?? '',
                 style: const TextStyle(color: AppColors.textSecondary),
               ),
+
               const SizedBox(height: 30),
 
+              
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    _tile(icon: Icons.settings, label: "Account Settings", onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
-                      );
-                    }),
+                    _tile(
+                      icon: Icons.settings,
+                      label: "Account Settings",
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
+                        );
+                      },
+                    ),
                     _tile(icon: Icons.favorite, label: "Favorites", onTap: () {}),
                     _tile(icon: Icons.mail_outline, label: "Contact Us", onTap: () {}),
                   ],
@@ -137,12 +128,16 @@ void initState() {
               ),
 
               const SizedBox(height: 30),
+
+         
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () {
+                   
+                      UserSession.clear();
                       Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
                     },
                     icon: const Icon(Icons.logout),
@@ -162,6 +157,7 @@ void initState() {
       ),
     );
   }
+
 
   Widget _tile({required IconData icon, required String label, required VoidCallback onTap}) {
     return Container(
