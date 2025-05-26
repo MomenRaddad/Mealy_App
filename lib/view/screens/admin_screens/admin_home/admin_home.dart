@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/models/dashboard_card_data.dart';
 import 'package:meal_app/utils/size_extensions.dart';
 import 'package:meal_app/view/screens/admin_screens/admin_home/chart_section.dart';
 import 'package:meal_app/view/screens/admin_screens/admin_home/dashboard_section.dart';
 import 'package:meal_app/view/screens/admin_screens/admin_home/header_section.dart';
+import 'package:meal_app/view/screens/admin_screens/admin_home/overview_card.dart';
 import 'package:meal_app/view/screens/admin_screens/admin_home/top_meals_section.dart';
 
 class AdminHomeScreen extends StatelessWidget {
@@ -32,7 +34,8 @@ class AdminHomeScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     SizedBox(height: context.wp(12)),
-                    DashboardSection(),
+                    CardsSection(),
+
                     SizedBox(height: context.wp(20)),
                     ChartSection(),
                     SizedBox(height: context.wp(20)),
