@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/models/user_model.dart';
+import 'package:meal_app/models/user_session.dart';
 import 'package:meal_app/view/screens/Login_Signup/Signup/signup.dart';
 import 'package:meal_app/viewmodels/user_view_model.dart';
 import 'package:provider/provider.dart';
@@ -13,7 +14,7 @@ class FullUserTable extends StatefulWidget {
 }
 
 class _FullUserTableState extends State<FullUserTable> {
-  int rowsPerPage = 5;
+  int rowsPerPage = 7;
   int currentPage = 0;
 
   late UserViewModel vm;
@@ -45,11 +46,32 @@ class _FullUserTableState extends State<FullUserTable> {
             }
           }).toList();
 
+          final currentUserIndex = filtered.indexWhere((u) => u.userId == UserSession.uid);
+          if (currentUserIndex > 0) {
+            final currentUser = filtered.removeAt(currentUserIndex);
+            filtered.insert(0, currentUser);
+          }
           final totalUsers = filtered.length;
-          final paginatedUsers = filtered
+          /* final paginatedUsers = filtered
               .skip(currentPage * rowsPerPage)
               .take(rowsPerPage)
+              .toList(); */
+          final startIndex = currentPage * rowsPerPage;
+          final endIndex = startIndex + rowsPerPage;
+          final paginatedUsers = filtered
+              .skip(startIndex)
+              .take(rowsPerPage)
               .toList();
+
+          // 👤 Always show current user on top of page 1
+          if (currentPage == 0) {
+            final currentUserIndex = paginatedUsers.indexWhere((u) => u.userId == UserSession.uid);
+            if (currentUserIndex > 0) {
+              final currentUser = paginatedUsers.removeAt(currentUserIndex);
+              paginatedUsers.insert(0, currentUser);
+            }
+          }
+
 
           return Scaffold(
             appBar: AppBar(title: const Text('All Users')),
@@ -99,7 +121,7 @@ class _FullUserTableState extends State<FullUserTable> {
                                   ),
                                   PopupMenuItem(
                                     value: UserSortOption.newest,
-                                    child: Text("Newest First"),
+                                    child: Text("Newest First (Default)"),
                                   ),
                                   PopupMenuItem(
                                     value: UserSortOption.oldest,
@@ -120,7 +142,7 @@ class _FullUserTableState extends State<FullUserTable> {
                               ),
                               ElevatedButton.icon(
                                 icon: const Icon(Icons.person_add_alt_1),
-                                label: const Text("Create Admin"),
+                                label: const Text("Create Account"),
                                 onPressed: () {
                                   Navigator.push(
                                     context,
@@ -158,53 +180,73 @@ class _FullUserTableState extends State<FullUserTable> {
                                 DataColumn(label: Text('Created')),
                                 DataColumn(label: Text('Actions')),
                               ],
-                              rows: paginatedUsers.map((user) {
-                                return DataRow(cells: [
-                                  DataCell(Text(user.userName, style: const TextStyle(color: Colors.black))),
-                                  DataCell(Text(user.userEmail, style: const TextStyle(color: Colors.black))),
-                                  DataCell(
-                                    Text(
+                              
+                                rows: [
+                                  ...paginatedUsers
+                                      .where((user) => user.userId == UserSession.uid),
+                                  ...paginatedUsers
+                                      .where((user) => user.userId != UserSession.uid),
+                                ].map((user) {
+
+                                final isCurrentUser = user.userId == UserSession.uid;
+                                return DataRow(                                  
+                                  cells: [
+                                    DataCell(
+                                      Text(
+                                        user.userName +
+                                            (user.userId == UserSession.uid ? " (You) 📌" : ""),
+                                        style: const TextStyle(color: Colors.black),
+                                      ),
+                                      onTap: () => _showEditDialog(context, user),                                    
+                                    ),
+                                    DataCell(Text(
+                                      user.userEmail,
+                                      style: const TextStyle(color: Colors.black),
+                                    )),
+                                    DataCell(Text(
                                       user.accountStatus,
                                       style: TextStyle(
-                                        color: user.accountStatus == 'inactive'
-                                            ? Colors.red
-                                            : Colors.black,
+                                        color: user.accountStatus == 'inactive' ? AppColors.error : Colors.black,
                                       ),
-                                    ),
-                                  ),
-                                  DataCell(Text(user.isPrivileged ? 'Admin' : 'User', style: const TextStyle(color: Colors.black))),
-                                  DataCell(Text(user.createdAt
-                                      .toLocal()
-                                      .toString()
-                                      .split(' ')
-                                      .first, style: const TextStyle(color: Colors.black))),
-                                  DataCell(Row(
-                                    children: [
-                                      IconButton(
-                                        icon: const Icon(Icons.edit),
-                                        tooltip: 'Edit User',
-                                        onPressed: () => _showEditDialog(context, user),
-                                      ),
-                                      IconButton(
-                                        icon: Icon(
-                                          user.accountStatus == 'active'
-                                              ? Icons.person_off
-                                              : Icons.person,
+                                    )),
+                                    DataCell(Text(
+                                      user.isPrivileged ? 'Admin' : 'User',
+                                      style: const TextStyle(color: Colors.black),
+                                    )),
+                                    DataCell(Text(
+                                      user.createdAt.toLocal().toString().split(' ').first,
+                                      style: const TextStyle(color: Colors.black),
+                                    )),
+                                    DataCell(Row(
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(Icons.edit),
+                                          tooltip: 'Edit User',
+                                          onPressed: () => _showEditDialog(context, user),
                                         ),
-                                        tooltip: 'Toggle Status',
-                                        onPressed: () => vm.toggleUserStatus(user.userId),
-                                      ),
-                                      IconButton(
-                                        icon: const Icon(Icons.delete),
-                                        tooltip: 'Delete User',
-                                        onPressed: () => _confirmDelete(context, user.userId),
-                                      ),
-                                    ],
-                                  )),
-                                ]);
+                                        if (!isCurrentUser)
+                                          IconButton(
+                                            icon: Icon(
+                                              user.accountStatus == 'active' ? Icons.person_off : Icons.person,
+                                              color: user.accountStatus == 'active' ? Colors.red : Colors.green,
+                                            ),
+                                            tooltip: user.accountStatus == 'active'
+                                                ? 'Deactivate Account'
+                                                : 'Reactivate Account',
+                                            onPressed: () => _confirmDelete(context, user.userId),
+                                          ),
+                                      ],
+                                    )),
+                                  ],
+                                    color: isCurrentUser
+                                        ? WidgetStatePropertyAll(AppColors.accent2.withValues(alpha: 0.5))
+                                        : null,
+                                );
                               }).toList(),
                             ),
                           ),
+
+
                           const SizedBox(height: 12),
 
                           // Footer: Pagination
@@ -246,8 +288,8 @@ class _FullUserTableState extends State<FullUserTable> {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("Delete User"),
-        content: const Text("Are you sure you want to delete this user?"),
+        title: const Text("Suspend User"),
+        content: const Text("Are you sure you want to suspend this user?"),
         actions: [
           TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
@@ -255,9 +297,9 @@ class _FullUserTableState extends State<FullUserTable> {
           ElevatedButton(
               onPressed: () {
                 Navigator.of(ctx).pop();
-                vm.deleteUser(userId);
+                vm.toggleUserStatus(userId);
               },
-              child: const Text("Delete")),
+              child: const Text("Suspend")),
         ],
       ),
     );
@@ -266,89 +308,90 @@ class _FullUserTableState extends State<FullUserTable> {
   void _showEditDialog(BuildContext context, UserModel user) {
     final nameController = TextEditingController(text: user.userName);
     final emailController = TextEditingController(text: user.userEmail);
+    bool isAdmin = user.isPrivileged;
 
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: const Text("Edit User"),
+        backgroundColor: AppColors.background,
+        title: Row(
+          children: const [
+            Icon(Icons.edit, color: AppColors.primary),
+            SizedBox(width: 8),
+            Text("Edit User", style: TextStyle(color: AppColors.textPrimary)),
+          ],
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             TextField(
               controller: nameController,
-              decoration: const InputDecoration(labelText: "Name"),
+              decoration: const InputDecoration(
+                labelText: "Name",
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+              ),
             ),
             const SizedBox(height: 8),
             TextField(
               controller: emailController,
-              decoration: const InputDecoration(labelText: "Email"),
+              decoration: const InputDecoration(
+                labelText: "Email",
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+              ),
+            ),
+            const SizedBox(height: 12),
+            DropdownButtonFormField<bool>(
+              value: isAdmin,
+              decoration: const InputDecoration(
+                labelText: 'Role',
+                labelStyle: TextStyle(color: AppColors.textSecondary),
+              ),
+              items: const [
+                DropdownMenuItem(
+                  value: true,
+                  child: Text("Admin"),
+                ),
+                DropdownMenuItem(
+                  value: false,
+                  child: Text("User"),
+                ),
+              ],
+              onChanged: (value) {
+                if (value != null) isAdmin = value;
+              },
             ),
           ],
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text("Cancel")),
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text("Cancel", style: TextStyle(color: AppColors.textSecondary)),
+          ),
           ElevatedButton(
-              onPressed: () {
-                final updated = UserModel(
-                  userId: user.userId,
-                  userName: nameController.text.trim(),
-                  userEmail: emailController.text.trim(),
-                  accountStatus: user.accountStatus,
-                  isPrivileged: user.isPrivileged,
-                  createdAt: user.createdAt,
-                  phoneNumber: user.phoneNumber,
-                  gender: user.gender,
-                  DOB: user.DOB,
-                );
-                vm.userService.updateUser(updated);
-                vm.fetchAllData();
-                Navigator.of(ctx).pop();
-              },
-              child: const Text("Save")),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppColors.primary,
+            ),
+            onPressed: () {
+              final updated = UserModel(
+                userId: user.userId,
+                userName: nameController.text.trim(),
+                userEmail: emailController.text.trim(),
+                accountStatus: user.accountStatus,
+                isPrivileged: isAdmin,
+                createdAt: user.createdAt,
+                phoneNumber: user.phoneNumber,
+                gender: user.gender,
+                DOB: user.DOB,
+              );
+              vm.userService.updateUser(updated);
+              vm.fetchAllData();
+              Navigator.of(ctx).pop();
+            },
+            child: const Text("Save"),
+          ),
         ],
       ),
     );
   }
-}
 
-
-class _StatCard extends StatelessWidget {
-  final String title;
-  final int count;
-  final Color color;
-  final IconData icon;
-
-  const _StatCard({
-    required this.title,
-    required this.count,
-    required this.color,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.all(8),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 28, color: Colors.black54),
-            const SizedBox(height: 8),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            Text(count.toString(),
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          ],
-        ),
-      ),
-    );
-  }
 }
