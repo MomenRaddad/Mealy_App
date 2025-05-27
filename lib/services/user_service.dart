@@ -24,9 +24,25 @@ class UserService {
     await _users.doc(user.userId).update(user.toJson());
   }
 
-  Future<void> deleteUser(String userId) async {
-    await _users.doc(userId).delete();
+  Stream<List<UserModel>> streamUsers() {
+    return FirebaseFirestore.instance
+        .collection('users')
+        .snapshots()
+        .map((snapshot) {
+          return snapshot.docs.map((doc) {
+            return UserModel.fromJson(doc.data());
+          }).toList();
+        });
   }
+  
+  // This method is disabled, and the user shouldn't be deleted.  
+  // The only way to delete a user is to set their account status to 'inactive'.
+  // So their account can be restored later if needed.
+  // and the user data will still be available for analytics.
+
+  /* Future<void> deleteUser(String userId) async {
+    await _users.doc(userId).delete();
+  } */
 
   Future<Map<String, int>> fetchUserStats() async {
     final snapshot = await _users.get();
@@ -69,7 +85,7 @@ class UserService {
           loginCounts[weekday] = loginCounts[weekday]! + uids.length;
         }
       } catch (e) {
-        debugPrint("🛑 Error parsing login document '${doc.id}': $e");
+        debugPrint("Error parsing login document '${doc.id}': $e");
       }
     }
 
