@@ -47,4 +47,16 @@ class UserModel {
     DOB: DateTime.tryParse(json['DOB'] ?? '') ?? DateTime(2000),
   );
 
+  factory UserModel.empty() => 
+    UserModel(
+      userId: '',
+      userName: '',
+      userEmail: '',
+      DOB: DateTime(2000),
+      gender: '',
+      isPrivileged: false,
+      accountStatus: 'inactive',
+      createdAt: DateTime(2000),
+      phoneNumber: '',
+    );
 }
