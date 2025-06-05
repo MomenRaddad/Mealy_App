@@ -2,25 +2,18 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meal_app/core/colors.dart';
-import 'package:meal_app/core/constants.dart';
-import 'package:meal_app/utils/navigation_utils.dart';
-import 'package:meal_app/view/screens/user_screens/favorites/favorites_screen.dart';
+import 'package:meal_app/models/user_session.dart';
 import 'package:meal_app/view/screens/user_screens/settings/account_settings_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  _ProfileScreenState createState() => _ProfileScreenState(); 
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
   XFile? _profileImage;
-
-  final String userName = "Islam Yasin";
-  final String userHandle = "@islamyasin";
-  final String profileImageUrl = "https://wallpapersok.com/images/hd/cool-anime-boy-pfp-hotaro-oreki-ejrnayvw61coeizn.jpg";
-  final String coverImageUrl = "https://i.pinimg.com/736x/60/cb/46/60cb4600ad2427938722b77faba6426a.jpg";
 
   Future<void> _pickImage() async {
     final picker = ImagePicker();
@@ -38,6 +31,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
+            
               Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -46,12 +40,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: NetworkImage(coverImageUrl),
+                        image: UserSession.backgroundURL != null &&
+                                UserSession.backgroundURL!.isNotEmpty
+                            ? NetworkImage(UserSession.backgroundURL!)
+                            : const AssetImage("assets/images/default_background.jpg")
+                                as ImageProvider,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
 
+                
                   Positioned(
                     bottom: -40,
                     left: MediaQuery.of(context).size.width / 2 - 55,
@@ -65,12 +64,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             radius: 50,
                             backgroundImage: _profileImage != null
                                 ? FileImage(File(_profileImage!.path))
-                                : NetworkImage(profileImageUrl) as ImageProvider,
+                                : (UserSession.photoURL != null &&
+                                        UserSession.photoURL!.isNotEmpty)
+                                    ? NetworkImage(UserSession.photoURL!)
+                                    : const AssetImage("assets/images/default_user.png")
+                                        as ImageProvider,
                           ),
                         ),
                         Positioned(
-                          right: 4,
                           bottom: 4,
+                          right: 4,
                           child: GestureDetector(
                             onTap: _pickImage,
                             child: Container(
@@ -90,33 +93,25 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
 
               const SizedBox(height: 60),
-              const Text(
-                "Hey! I'm",
-                style: TextStyle(color: AppColors.textSecondary, fontSize: 14),
-              ),
+              const Text("Hey! I'm", style: TextStyle(color: AppColors.textSecondary)),
               const SizedBox(height: 4),
               Text(
-                userName,
-                style: const TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.textPrimary,
-                ),
+                UserSession.name ?? 'Guest',
+                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
               ),
               Text(
-                userHandle,
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: AppColors.textSecondary,
-                ),
+                UserSession.email ?? '',
+                style: const TextStyle(color: AppColors.textSecondary),
               ),
+
               const SizedBox(height: 30),
 
+              
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
                   children: [
-                    _profileTile(
+                    _tile(
                       icon: Icons.settings,
                       label: "Account Settings",
                       onTap: () {
@@ -126,39 +121,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         );
                       },
                     ),
-                    _profileTile(
-                      icon: Icons.favorite,
-                      label: "Favorites",
-                      onTap: () {
-                        AppNavigator.pushWithNavBar(context, FavoritesScreen());
-                      },
-                    ),
-                    _profileTile(
-                      icon: Icons.mail_outline,
-                      label: "Contact Us",
-                      onTap: () {},
-                    ),
+                    _tile(icon: Icons.favorite, label: "Favorites", onTap: () {}),
+                    _tile(icon: Icons.mail_outline, label: "Contact Us", onTap: () {}),
                   ],
                 ),
               ),
 
               const SizedBox(height: 30),
 
+         
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     onPressed: () {
+                   
+                      UserSession.clear();
+                      Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
                     },
                     icon: const Icon(Icons.logout),
                     label: const Text("Logout"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
-                      ),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                     ),
                   ),
                 ),
@@ -171,11 +158,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _profileTile({
-    required IconData icon,
-    required String label,
-    required VoidCallback onTap,
-  }) {
+
+  Widget _tile({required IconData icon, required String label, required VoidCallback onTap}) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(

@@ -1,8 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:uuid/uuid.dart';
+
 import 'package:meal_app/core/colors.dart';
-import 'package:meal_app/core/constants.dart';
+import 'package:meal_app/viewmodels/profile_viewmodel.dart';
 
 class AccountSettingsScreen extends StatefulWidget {
   const AccountSettingsScreen({super.key});
@@ -12,13 +16,8 @@ class AccountSettingsScreen extends StatefulWidget {
 }
 
 class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
-  XFile? _profileImage;
-  XFile? _coverImage;
-
-  String _name = "Islam Yasin";
-  String _email = "0islamyasin@gmail.com";
-  DateTime? _birthDate;
-
+  XFile? _newProfileImage;
+  XFile? _newCoverImage;
   final picker = ImagePicker();
 
   Future<void> _pickImage(bool isCover) async {
@@ -26,25 +25,27 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
     if (picked != null) {
       setState(() {
         if (isCover) {
-          _coverImage = picked;
+          _newCoverImage = picked;
         } else {
-          _profileImage = picked;
+          _newProfileImage = picked;
         }
       });
     }
   }
 
-  Future<void> _editField(String title, String initialValue, Function(String) onSave) async {
-    final controller = TextEditingController(text: initialValue);
+  Future<String> _uploadImageToStorage(XFile image, String path) async {
+    final ref = FirebaseStorage.instance.ref().child('$path/${const Uuid().v4()}');
+    await ref.putFile(File(image.path));
+    return await ref.getDownloadURL();
+  }
 
+  Future<void> _editField(String label, String currentValue, Function(String) onSave) async {
+    final controller = TextEditingController(text: currentValue);
     await showDialog(
       context: context,
       builder: (_) => AlertDialog(
-        title: Text("Edit $title"),
-        content: TextField(
-          controller: controller,
-          decoration: InputDecoration(hintText: "Enter $title"),
-        ),
+        title: Text("Edit $label"),
+        content: TextField(controller: controller),
         actions: [
           TextButton(onPressed: () => Navigator.pop(context), child: const Text("Cancel")),
           ElevatedButton(
@@ -53,33 +54,62 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
               Navigator.pop(context);
             },
             child: const Text("Save"),
-          )
+          ),
         ],
       ),
     );
   }
 
-  Future<void> _editBirthDate() async {
+  Future<void> _editBirthDate(DateTime? currentDate, Function(DateTime) onSave) async {
     final picked = await showDatePicker(
       context: context,
-      initialDate: _birthDate ?? DateTime(2000),
+      initialDate: currentDate ?? DateTime(2000),
       firstDate: DateTime(1950),
       lastDate: DateTime.now(),
     );
-    if (picked != null) {
-      setState(() => _birthDate = picked);
+    if (picked != null) onSave(picked);
+  }
+
+  Future<void> _saveProfile(ProfileViewModel vm) async {
+    final user = vm.user!;
+    String newPhotoURL = user.photoURL ?? '';
+    String newBackgroundURL = user.backgroundURL ?? '';
+
+    if (_newProfileImage != null) {
+      newPhotoURL = await _uploadImageToStorage(_newProfileImage!, 'profile_photos');
+    }
+    if (_newCoverImage != null) {
+      newBackgroundURL = await _uploadImageToStorage(_newCoverImage!, 'cover_photos');
+    }
+
+    final updatedUser = user.copyWith(
+      photoURL: newPhotoURL,
+      backgroundURL: newBackgroundURL,
+    );
+
+
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Profile saved successfully ✅")),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final vm = Provider.of<ProfileViewModel>(context);
+    final user = vm.user;
+
+    if (user == null) {
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(title: const Text("Edit Profile")),
       body: SingleChildScrollView(
         child: Column(
           children: [
-          
             Stack(
               clipBehavior: Clip.none,
               children: [
@@ -90,15 +120,15 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                       width: double.infinity,
                       decoration: BoxDecoration(
                         image: DecorationImage(
-                          image: _coverImage != null
-                              ? FileImage(File(_coverImage!.path))
-                              : const NetworkImage("https://images.unsplash.com/photo-1517816743773-6e0fd518b4a6")
-                                  as ImageProvider,
+                          image: _newCoverImage != null
+                              ? FileImage(File(_newCoverImage!.path))
+                              : (user.backgroundURL?.isNotEmpty == true
+                                  ? NetworkImage(user.backgroundURL!)
+                                  : const AssetImage("assets/images/default_cover.jpg")) as ImageProvider,
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    
                     Container(height: 60, color: Colors.grey[100]),
                   ],
                 ),
@@ -121,9 +151,11 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
                         backgroundColor: Colors.white,
                         child: CircleAvatar(
                           radius: 50,
-                          backgroundImage: _profileImage != null
-                              ? FileImage(File(_profileImage!.path))
-                              : const NetworkImage("https://via.placeholder.com/150") as ImageProvider,
+                          backgroundImage: _newProfileImage != null
+                              ? FileImage(File(_newProfileImage!.path))
+                              : (user.photoURL?.isNotEmpty == true
+                                  ? NetworkImage(user.photoURL!)
+                                  : const AssetImage("assets/images/default_user.png")) as ImageProvider,
                         ),
                       ),
                       Positioned(
@@ -150,48 +182,49 @@ class _AccountSettingsScreenState extends State<AccountSettingsScreen> {
 
             _editableTile(
               title: "Full Name",
-              value: _name,
-              onEdit: () => _editField("Name", _name, (val) => setState(() => _name = val)),
+              value: user.userName,
+              onEdit: () => _editField("Name", user.userName, (val) {
+                vm.user = user.copyWith(userName: val);
+                vm.notifyListeners();
+              }),
             ),
-
-         
             _editableTile(
               title: "Email",
-              value: _email,
-              onEdit: () => _editField("Email", _email, (val) => setState(() => _email = val)),
+              value: user.userEmail,
+              onEdit: () => _editField("Email", user.userEmail, (val) {
+                vm.user = user.copyWith(userEmail: val);
+                vm.notifyListeners();
+              }),
             ),
-
-          
-            _editableTile(
-              title: "Date of Birth",
-              value: _birthDate != null
-                  ? "${_birthDate!.day}/${_birthDate!.month}/${_birthDate!.year}"
-                  : "Not set",
-              onEdit: _editBirthDate,
-            ),
+            if (user.DOB != null)
+              _editableTile(
+                title: "Date of Birth",
+                value: "${user.DOB!.day}/${user.DOB!.month}/${user.DOB!.year}",
+                onEdit: () => _editBirthDate(user.DOB, (val) {
+                  vm.user = user.copyWith(DOB: val);
+                  vm.notifyListeners();
+                }),
+              ),
 
             const SizedBox(height: 16),
             TextButton(
-              onPressed: () {
-              
-              },
+              onPressed: () {},
               child: const Text("Click here to reset or update your password"),
             ),
             const SizedBox(height: 20),
 
-         
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {
-                    
-                  },
+                  onPressed: () => _saveProfile(vm),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                   child: const Text("Save Settings"),
                 ),
