@@ -14,7 +14,7 @@ class FavoritesScreen extends StatefulWidget {
 }
 
 class _FavoritesScreenState extends State<FavoritesScreen> {
-  final String dummyUserId = "sLknwnNPPa0eXns5zVAB"; // Replace with your actual dummy user ID
+  final String dummyUserId = "sLknwnNPPa0eXns5zVAB"; 
 
   @override
   Widget build(BuildContext context) {

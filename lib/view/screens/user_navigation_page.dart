@@ -36,10 +36,10 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
         controller: _controller,
         screens: [
           HomeScreen(),
-          TasksScreen(),
           ExploreScreen(),
+          TasksScreen(),
           ProfileScreen(),
-          SettingsScreen(),
+          SettingsPreferencesScreen(),
         ],
         items: [
           PersistentBottomNavBarItem(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/models/user_model.dart';
 import 'package:meal_app/view/screens/Login_Signup/Signup/signup.dart';
 import 'package:meal_app/viewmodels/user_view_model.dart';
@@ -35,9 +34,9 @@ class _FullUserTableState extends State<FullUserTable> {
           final filtered = vm.filteredUsers.where((u) {
             switch (_statusFilter) {
               case 'Active':
-                return u.accountStatus == 'active';
+                return u.accountStatus == AccountStatus.active;
               case 'Inactive':
-                return u.accountStatus == 'inactive';
+                return u.accountStatus == AccountStatus.inactive;
               case 'Admins':
                 return u.isPrivileged;
               default:
@@ -164,20 +163,16 @@ class _FullUserTableState extends State<FullUserTable> {
                                   DataCell(Text(user.userEmail, style: const TextStyle(color: Colors.black))),
                                   DataCell(
                                     Text(
-                                      user.accountStatus,
+                                      user.accountStatus.name,
                                       style: TextStyle(
-                                        color: user.accountStatus == 'inactive'
+                                        color: user.accountStatus == AccountStatus.inactive
                                             ? Colors.red
                                             : Colors.black,
                                       ),
                                     ),
                                   ),
                                   DataCell(Text(user.isPrivileged ? 'Admin' : 'User', style: const TextStyle(color: Colors.black))),
-                                  DataCell(Text(user.createdAt
-                                      .toLocal()
-                                      .toString()
-                                      .split(' ')
-                                      .first, style: const TextStyle(color: Colors.black))),
+                                  DataCell(Text(user.createdAt.toLocal().toString().split(' ').first, style: const TextStyle(color: Colors.black))),
                                   DataCell(Row(
                                     children: [
                                       IconButton(
@@ -187,7 +182,7 @@ class _FullUserTableState extends State<FullUserTable> {
                                       ),
                                       IconButton(
                                         icon: Icon(
-                                          user.accountStatus == 'active'
+                                          user.accountStatus == AccountStatus.active
                                               ? Icons.person_off
                                               : Icons.person,
                                         ),
@@ -249,9 +244,7 @@ class _FullUserTableState extends State<FullUserTable> {
         title: const Text("Delete User"),
         content: const Text("Are you sure you want to delete this user?"),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text("Cancel")),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text("Cancel")),
           ElevatedButton(
               onPressed: () {
                 Navigator.of(ctx).pop();
@@ -286,21 +279,12 @@ class _FullUserTableState extends State<FullUserTable> {
           ],
         ),
         actions: [
-          TextButton(
-              onPressed: () => Navigator.of(ctx).pop(),
-              child: const Text("Cancel")),
+          TextButton(onPressed: () => Navigator.of(ctx).pop(), child: const Text("Cancel")),
           ElevatedButton(
               onPressed: () {
-                final updated = UserModel(
-                  userId: user.userId,
+                final updated = user.copyWith(
                   userName: nameController.text.trim(),
                   userEmail: emailController.text.trim(),
-                  accountStatus: user.accountStatus,
-                  isPrivileged: user.isPrivileged,
-                  createdAt: user.createdAt,
-                  phoneNumber: user.phoneNumber,
-                  gender: user.gender,
-                  DOB: user.DOB,
                 );
                 vm.userService.updateUser(updated);
                 vm.fetchAllData();
@@ -308,46 +292,6 @@ class _FullUserTableState extends State<FullUserTable> {
               },
               child: const Text("Save")),
         ],
-      ),
-    );
-  }
-}
-
-
-class _StatCard extends StatelessWidget {
-  final String title;
-  final int count;
-  final Color color;
-  final IconData icon;
-
-  const _StatCard({
-    required this.title,
-    required this.count,
-    required this.color,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.all(8),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: color,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 28, color: Colors.black54),
-            const SizedBox(height: 8),
-            Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
-            const SizedBox(height: 6),
-            Text(count.toString(),
-                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-          ],
-        ),
       ),
     );
   }

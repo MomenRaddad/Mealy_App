@@ -24,7 +24,6 @@ class UserViewModel extends ChangeNotifier {
   bool get isLoading => _loading;
 
   UserSortOption _sortOption = UserSortOption.newest;
-
   UserSortOption get sortOption => _sortOption;
   UserService get userService => _userService;
 
@@ -40,7 +39,7 @@ class UserViewModel extends ChangeNotifier {
             final name = user.userName.toLowerCase();
             final email = user.userEmail.toLowerCase();
             return name.contains(_searchQuery.toLowerCase()) ||
-                  email.contains(_searchQuery.toLowerCase());
+                email.contains(_searchQuery.toLowerCase());
           }).toList();
 
     switch (_sortOption) {
@@ -61,7 +60,6 @@ class UserViewModel extends ChangeNotifier {
 
     return filtered;
   }
-
 
   void updateSearchQuery(String query) {
     _searchQuery = query;
@@ -86,20 +84,14 @@ class UserViewModel extends ChangeNotifier {
   Future<void> toggleUserStatus(String userId) async {
     final index = _users.indexWhere((u) => u.userId == userId);
     if (index == -1) return;
+
     final user = _users[index];
-    final newStatus = user.accountStatus == 'active' ? 'inactive' : 'active';
-    final updated = UserModel(
-      userId: user.userId,
-      userName: user.userName,
-      userEmail: user.userEmail,
-      accountStatus: newStatus,
-      isPrivileged: user.isPrivileged,
-      createdAt: user.createdAt,
-      phoneNumber: user.phoneNumber,
-      gender: user.gender,
-      DOB: user.DOB,
-    );
+    final newStatus = user.accountStatus == AccountStatus.active
+        ? AccountStatus.inactive
+        : AccountStatus.active;
+
+    final updated = user.copyWith(accountStatus: newStatus);
     await _userService.updateUser(updated);
     await fetchAllData();
   }
-} // end of UserViewModel
+}
