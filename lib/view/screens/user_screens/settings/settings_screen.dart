@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:meal_app/provider/theme_provider.dart';
@@ -7,7 +8,8 @@ class SettingsPreferencesScreen extends StatefulWidget {
   const SettingsPreferencesScreen({super.key});
 
   @override
-  State<SettingsPreferencesScreen> createState() => _SettingsPreferencesScreenState();
+  State<SettingsPreferencesScreen> createState() =>
+      _SettingsPreferencesScreenState();
 }
 
 class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
@@ -19,46 +21,51 @@ class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
     final controller = TextEditingController();
     showDialog(
       context: context,
-      builder: (_) => AlertDialog(
-        title: const Text("Add New Category"),
-        content: TextField(
-          controller: controller,
-          decoration: const InputDecoration(hintText: "Category Name"),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
+      builder:
+          (_) => AlertDialog(
+            title: const Text("Add New Category"),
+            content: TextField(
+              controller: controller,
+              decoration: const InputDecoration(hintText: "Category Name"),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Cancel"),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (controller.text.trim().isNotEmpty) {
+                    setState(
+                      () => customCategories.add(controller.text.trim()),
+                    );
+                  }
+                  Navigator.pop(context);
+                },
+                child: const Text("Add"),
+              ),
+            ],
           ),
-          ElevatedButton(
-            onPressed: () {
-              if (controller.text.trim().isNotEmpty) {
-                setState(() => customCategories.add(controller.text.trim()));
-              }
-              Navigator.pop(context);
-            },
-            child: const Text("Add"),
-          ),
-        ],
-      ),
     );
   }
 
   void _clearCache() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Cache cleared")),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text("Cache cleared")));
   }
-void _logout() {
-  ScaffoldMessenger.of(context).showSnackBar(
-    const SnackBar(content: Text("Logged out")),
-  );
 
-  Future.delayed(const Duration(milliseconds: 300), () {
-    Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
-  });
-}
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
 
+    Navigator.of(
+      context,
+      rootNavigator: true,
+    ).pushNamedAndRemoveUntil('/home', (route) => false);
+    // ScaffoldMessenger.of(
+    //   context,
+    // ).showSnackBar(const SnackBar(content: Text("Logged out")));
+  }
 
   void _openHistoryScreen() {
     Navigator.push(
@@ -116,7 +123,10 @@ void _logout() {
 
           const Divider(height: 30),
 
-          const Text("Custom Task Categories", style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            "Custom Task Categories",
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 8),
           ...customCategories.map(
             (cat) => ListTile(
@@ -140,7 +150,10 @@ void _logout() {
 
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.redAccent),
-            title: const Text("Logout", style: TextStyle(color: Colors.redAccent)),
+            title: const Text(
+              "Logout",
+              style: TextStyle(color: Colors.redAccent),
+            ),
             onTap: _logout,
           ),
         ],

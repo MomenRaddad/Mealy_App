@@ -18,13 +18,10 @@ void main() async {
     MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => ExploreViewModel()), 
-         ChangeNotifierProvider(create: (_) => MealDetailsViewModel()),
-         ChangeNotifierProvider(create: (_) => VisitedMealsViewModel()),
-         ChangeNotifierProvider(create: (_) => ProfileViewModel()),
-
-              
-
+        ChangeNotifierProvider(create: (_) => ExploreViewModel()),
+        ChangeNotifierProvider(create: (_) => MealDetailsViewModel()),
+        ChangeNotifierProvider(create: (_) => VisitedMealsViewModel()),
+        ChangeNotifierProvider(create: (_) => ProfileViewModel()),
       ],
       child: const MyApp(),
     ),

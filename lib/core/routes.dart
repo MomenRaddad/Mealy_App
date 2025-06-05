@@ -12,9 +12,9 @@ import 'package:meal_app/view/screens/user_screens/meals/explore_screen.dart';
 
 class AppRoutes {
   // Route names
-  static const String splashScreen='/splashScreen';
-  static const String login='/login';
-  static const String signup='/signup';
+  static const String splashScreen = '/splashScreen';
+  static const String login = '/login';
+  static const String signup = '/signup';
   static const String accountSelector = '/accountSelector';
 
   static const String userNav = '/userNav';
@@ -22,7 +22,7 @@ class AppRoutes {
   static const String settingsAdmin = '/settingsAdmin';
   static const String addMeal = '/addMeal';
   static const String mealDetails = '/mealDetails';
-  static const String exploreMeals ='/exploreMeals';
+  static const String exploreMeals = '/exploreMeals';
   // static const String mealDetails = '/meal-details';
   // static const String favorites = '/favorites';
 
@@ -45,9 +45,9 @@ class AppRoutes {
       case addMeal:
         return MaterialPageRoute(builder: (_) => AddMealScreen());
       case exploreMeals:
-      return MaterialPageRoute(builder:(_) => ExploreScreen() );
-    case '/home':
-  return MaterialPageRoute(builder: (_) => UserNavigationPage());
+        return MaterialPageRoute(builder: (_) => ExploreScreen());
+      case '/home':
+        return MaterialPageRoute(builder: (_) => const LoginScreen());
 
       default:
         return MaterialPageRoute(
