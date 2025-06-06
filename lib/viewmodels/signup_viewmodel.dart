@@ -32,7 +32,7 @@ class SignUpViewModel {
         DOB: dateOfBirth,
         gender: gender,
         isPrivileged: isAdmin,
-        accountStatus: "active",
+        accountStatus: AccountStatus.active,
         createdAt: DateTime.now(),
         phoneNumber: phoneNumber,
       );

@@ -67,10 +67,12 @@ ios/.dart_tool/
 # Exclude macOS and Linux folders (if created by mistake)
 macos/
 linux/
-
+ios/
+windows/
 # Web related
 web/.dart_tool/
 web/build/
 
 # Others
 *.tmp
+ios/Runner/GeneratedPluginRegistrant.h

@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/utils/size_extensions.dart';
-import 'package:meal_app/view/components/search_bar.dart';
 import 'package:meal_app/view/screens/user_screens/home/date_selector.dart';
 import 'package:meal_app/view/screens/user_screens/home/goal_card.dart';
 import 'package:meal_app/view/screens/user_screens/home/header_section.dart';

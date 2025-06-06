@@ -17,7 +17,7 @@ class AddMealViewModel extends ChangeNotifier {
       final imageRef = storageRef.child(
         'meals/${DateTime.now().millisecondsSinceEpoch}.jpg',
       );
-      print('Uploading image to ' + imageRef.fullPath);
+      print('Uploading image to ${imageRef.fullPath}');
       final metadata = SettableMetadata(contentType: 'image/jpeg');
       await imageRef.putFile(imageFile, metadata);
       print('Image uploaded, getting download URL');

@@ -27,7 +27,7 @@ class IngredientsList extends StatefulWidget {
 }
 
 class _IngredientsListState extends State<IngredientsList> {
-  List<TextEditingController> _nameControllers = [];
+  final List<TextEditingController> _nameControllers = [];
 
   @override
   void initState() {
