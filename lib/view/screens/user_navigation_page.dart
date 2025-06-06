@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:meal_app/core/nav_bar_theme.dart';
+import 'package:meal_app/view/screens/user_screens/home/tasks_screen.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import '../../core/colors.dart';
 import 'user_screens/home/home_screen.dart';
@@ -7,7 +8,6 @@ import 'user_screens/meals/explore_screen.dart';
 import 'user_screens/profile/profile_screen.dart';
 import 'user_screens/settings/settings_screen.dart';
 import 'user_screens/tasks/add_task_screen.dart';
-
 
 class UserNavigationPage extends StatefulWidget {
   const UserNavigationPage({super.key});
@@ -36,8 +36,6 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
         controller: _controller,
         screens: [
           HomeScreen(),
-
-
 
           ExploreScreen(),
           TasksScreen(),
@@ -87,20 +85,19 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
           // borderRadius: BorderRadius.circular(10.0),
           colorBehindNavBar: AppColors.background,
         ),
-    onItemSelected: (index) async {
-    if (index == 2) {
-    final result = await Navigator.push(
-    context,
-    MaterialPageRoute(builder: (_) => const AddTaskScreen()),
-    );
-    if (result == 'refresh') {
-    _controller.jumpToTab(0); // HomeScreen reload
-    }
-    } else {
-    _controller.index = index;
-    }
-    },
-
+        onItemSelected: (index) async {
+          if (index == 2) {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const AddTaskScreen()),
+            );
+            if (result == 'refresh') {
+              _controller.jumpToTab(0); // HomeScreen reload
+            }
+          } else {
+            _controller.index = index;
+          }
+        },
       ),
     );
   }
