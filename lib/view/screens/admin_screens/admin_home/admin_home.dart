@@ -5,9 +5,12 @@ import 'package:meal_app/utils/size_extensions.dart';
 import 'package:meal_app/view/screens/admin_screens/admin_home/chart_section.dart';
 import 'package:meal_app/view/screens/admin_screens/admin_home/dashboard_section.dart';
 import 'package:meal_app/view/screens/admin_screens/admin_home/header_section.dart';
+import 'package:meal_app/view/screens/admin_screens/admin_home/overview_card.dart';
 import 'package:meal_app/view/screens/admin_screens/admin_home/top_meals_section.dart';
 
 class AdminHomeScreen extends StatelessWidget {
+  const AdminHomeScreen({super.key});
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -33,28 +36,8 @@ class AdminHomeScreen extends StatelessWidget {
                 child: Column(
                   children: [
                     SizedBox(height: context.wp(12)),
-                    DashboardSection(
-                      cards: [
-                        DashboardCardData(
-                          label: 'Users',
-                          count: '1,475',
-                          color: AppColors.primary,
-                          icon: Icons.person_outline,
-                        ),
-                        DashboardCardData(
-                          label: 'Admins',
-                          count: '50',
-                          color: AppColors.accent1,
-                          icon: Icons.admin_panel_settings_outlined,
-                        ),
-                        DashboardCardData(
-                          label: 'Meals',
-                          count: '102,233',
-                          color: AppColors.accent2,
-                          icon: Icons.restaurant_menu,
-                        ),
-                      ],
-                    ),
+                    CardsSection(),
+
                     SizedBox(height: context.wp(20)),
                     ChartSection(),
                     SizedBox(height: context.wp(20)),

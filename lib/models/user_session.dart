@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+
 class UserSession {
   // This class is used to manage user session data.
   // It stores user information.
 
+class UserSession {
   static String? uid;
   static String? name;
   static String? email;
@@ -13,6 +15,29 @@ class UserSession {
   static String? createdAt;
   static String? dob;
   static bool isPrivileged = false;
+  // Static method to refresh user data from the database based on the current UID
+  static Future<void> refreshUserData() async {
+    if (uid == null) return;
+
+    try {
+      final doc =
+          await FirebaseFirestore.instance.collection('users').doc(uid).get();
+      final data = doc.data();
+
+      if (data != null) {
+        fromMap(data);
+      } else {
+        clear();
+      }
+    } catch (e) {
+      print("Error refreshing user data: $e");
+      clear();
+    }
+  }
+
+  static String? photoURL;
+  static String? backgroundURL;
+
   // Static method to refresh user data from the database based on the current UID
   static Future<void> refreshUserData() async {
     if (uid == null) return;
@@ -43,6 +68,8 @@ class UserSession {
     createdAt = data['createdAt'];
     dob = data['DOB'];
     isPrivileged = data['isPrivileged'] ?? false;
+    photoURL = data['photoURL'];
+    backgroundURL = data['backgroundURL'];
   }
 
   static String toStringDetails() {
@@ -56,8 +83,10 @@ class UserSession {
       - Phone: $phoneNumber
       - Created At: $createdAt
       - DOB: $dob
+      - Photo URL: $photoURL
+      - Background URL: $backgroundURL
       - Is Privileged: $isPrivileged
-      ''';
+    ''';
   }
 
   static void clear() {
@@ -70,5 +99,7 @@ class UserSession {
     createdAt = null;
     dob = null;
     isPrivileged = false;
+    photoURL = null;
+    backgroundURL = null;
   }
 }

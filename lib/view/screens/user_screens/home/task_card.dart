@@ -1,63 +1,71 @@
 import 'package:flutter/material.dart';
-import 'package:meal_app/view/screens/user_screens/home/dialogs/confirm_delete_dialog.dart';
-import 'package:meal_app/view/screens/user_screens/home/dialogs/edit_task_dialog.dart';
+import 'dialogs/confirm_delete_dialog.dart';
 
 class TaskCard extends StatelessWidget {
-  final String time;
   final String title;
-  final bool isDone;
-  final VoidCallback? onDelete;
+  final String time;
+  final String category;
+  final bool enableReminder;
   final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
+  final bool isDone;
+  final ValueChanged<bool>? onToggleDone;
 
   const TaskCard({
     super.key,
-    required this.time,
     required this.title,
+    required this.time,
+    required this.category,
     required this.isDone,
-    this.onDelete,
+    required this.enableReminder,
     this.onEdit,
+    this.onDelete,
+    this.onToggleDone,
+
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
-      child: ListTile(
-        leading: Icon(
+    child: ListTile(
+      leading: IconButton(
+        icon: Icon(
           isDone ? Icons.check_box : Icons.check_box_outline_blank,
           color: isDone ? Colors.green : Colors.grey,
         ),
-        title: Text(
-          title,
-          style: TextStyle(
-            decoration: isDone ? TextDecoration.lineThrough : TextDecoration.none,
-            color: isDone ? Colors.grey : Colors.black,
-          ),
-        ),
-        subtitle: Text(time),
+        onPressed: () {
+          if (onToggleDone != null) {
+            onToggleDone!(!isDone);
+          }
+        },
+    ),
+        title: Text(title, style: TextStyle(
+          fontWeight: FontWeight.bold,
+          decoration: isDone ? TextDecoration.lineThrough : TextDecoration.none,
+          decorationThickness: 2,
+          )),
+        subtitle: Text("$category  •  $time"),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            IconButton(
-              icon: const Icon(Icons.edit, color: Colors.green),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => EditTaskDialog(taskTitle: title),
-                );
-              },
-            ),
-            IconButton(
-              icon: const Icon(Icons.delete, color: Colors.red),
-              onPressed: () {
-                showDialog(
-                  context: context,
-                  builder: (_) => ConfirmDeleteDialog(onConfirm: () {
-                    if (onDelete != null) onDelete!();
-                  }),
-                );
-              },
-            ),
+            if (onEdit != null)
+              IconButton(
+                icon: const Icon(Icons.edit, color: Colors.green),
+                onPressed: onEdit,
+              ),
+            if (onDelete != null)
+              IconButton(
+                icon: const Icon(Icons.delete, color: Colors.red),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => ConfirmDeleteDialog(
+                      onConfirm: onDelete!,
+                    ),
+                  );
+                },
+              ),
           ],
         ),
       ),
