@@ -1,6 +1,3 @@
-/*
- * TODO: Refactor the page to use ChangeNotifier.
- */
 
 import 'package:flutter/material.dart';
 import 'package:meal_app/core/colors.dart';
@@ -8,7 +5,7 @@ import 'package:meal_app/utils/size_extensions.dart';
 import 'package:meal_app/view/screens/user_screens/home/date_selector.dart';
 import 'package:meal_app/view/screens/user_screens/home/goal_card.dart';
 import 'package:meal_app/view/screens/user_screens/home/header_section.dart';
-import 'package:meal_app/view/screens/user_screens/home/task_card.dart';
+import 'package:meal_app/view/screens/user_screens/home/tasks_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,23 +15,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  List<Map<String, dynamic>> taskList = [
-    {"title": "Go to church", "time": "8:00 AM", "isDone": true},
-    {"title": "Breakfast with friends", "time": "10:00 AM", "isDone": true},
-    {"title": "Meeting", "time": "12:00 PM", "isDone": false},
-  ];
-
-  void deleteTask(int index) {
-    setState(() {
-      taskList.removeAt(index);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    int completedTasks = taskList.where((task) => task['isDone'] == true).length;
-    int totalTasks = taskList.length;
-
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SingleChildScrollView(
@@ -43,27 +25,14 @@ class _HomeScreenState extends State<HomeScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const HeaderSection(),
-           /*  const SizedBox(height: 16),
-            SearchBarWidget(
-              hintText: "Search for tasks...",
-              onChanged: (query) {},
-            ),
-            */
-
             SizedBox(height: context.hp(16)),
-			
             const DateSelector(),
             SizedBox(height: context.hp(20)),
-            
-             // Placeholder for "Your Goals" section
             const Text(
               'Your Goals',
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
             ),
-
             SizedBox(height: context.hp(10)),
-            SizedBox(height: context.hp(10)),
-
             Row(
               children: const [
                 Expanded(
@@ -98,35 +67,8 @@ class _HomeScreenState extends State<HomeScreen> {
               goalValue: 8,
               unit: 'Hours',
             ),
-
             SizedBox(height: context.hp(20)),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                const Text(
-                  'Upcoming Tasks',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
-                ),
-                Text(
-                  "$completedTasks / $totalTasks Tasks Completed",
-                  style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
-                ),               
-              ],
-            ),
-            SizedBox(height: context.hp(10)),
-
-            // Task List from state
-            Column(
-              children: List.generate(taskList.length, (index) {
-                final task = taskList[index];
-                return TaskCard(
-                  time: task['time'],
-                  title: task['title'],
-                  isDone: task['isDone'],
-                  onDelete: () => deleteTask(index),
-                );
-              }),
-            )
+            const TasksScreen(),
           ],
         ),
       ),
