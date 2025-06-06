@@ -58,6 +58,19 @@ class UserModel {
         backgroundURL: json['backgroundURL'],
       );
 
+  factory UserModel.empty() => 
+    UserModel(
+      userId: '',
+      userName: '',
+      userEmail: '',
+      DOB: DateTime(2000),
+      gender: '',
+      isPrivileged: false,
+      accountStatus: 'inactive',
+      createdAt: DateTime(2000),
+      phoneNumber: '',
+    );
+
   UserModel copyWith({
     String? userId,
     String? userName,
@@ -85,4 +98,5 @@ class UserModel {
       backgroundURL: backgroundURL ?? this.backgroundURL,
     );
   }
+
 }

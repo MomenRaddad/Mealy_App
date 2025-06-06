@@ -1,5 +1,9 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:meal_app/models/user_model.dart';
+import 'package:meal_app/models/user_session.dart';
 import 'package:meal_app/services/user_service.dart';
 
 enum UserSortOption {
@@ -29,9 +33,39 @@ class UserViewModel extends ChangeNotifier {
 
   void updateSortOption(UserSortOption option) {
     _sortOption = option;
+    _sortUsers();
     notifyListeners();
   }
 
+  void _sortUsers() {
+    _users.sort((a, b) {
+      switch (_sortOption) {
+        case UserSortOption.nameAZ:
+          return a.userName.compareTo(b.userName);
+        case UserSortOption.nameZA:
+          return b.userName.compareTo(a.userName);
+        case UserSortOption.oldest:
+          return a.createdAt.compareTo(b.createdAt);
+        case UserSortOption.newest:
+        default:
+          return b.createdAt.compareTo(a.createdAt);
+      }
+    });
+
+    // Ensure current user is at top only when using default sort
+    if (_sortOption == UserSortOption.newest) {
+      final currentUser = _users.firstWhere(
+        (u) => u.userId == UserSession.uid,
+        orElse: () => UserModel.empty(),
+      );
+      if (currentUser.userId.isNotEmpty) {
+        _users.removeWhere((u) => u.userId == UserSession.uid);
+        _users.insert(0, currentUser);
+      }
+    }
+  }
+      
+  
   List<UserModel> get filteredUsers {
     List<UserModel> filtered = _searchQuery.isEmpty
         ? _users
@@ -66,7 +100,19 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
+  final _snackController = StreamController<String>.broadcast();
+  Stream<String> get snackStream => _snackController.stream;
+
+  StreamSubscription? _usersSubscription;
+
   Future<void> fetchAllData() async {
+    _usersSubscription?.cancel(); // cancel previous if exists
+    _usersSubscription = _userService.streamUsers().listen((userList) {
+      _users = userList;
+      _sortUsers();
+      notifyListeners();
+    });
+
     _loading = true;
     notifyListeners();
     _users = await _userService.fetchAllUsers();
@@ -76,10 +122,10 @@ class UserViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> deleteUser(String userId) async {
+  /* Future<void> deleteUser(String userId) async {
     await _userService.deleteUser(userId);
     await fetchAllData();
-  }
+  } */
 
   Future<void> toggleUserStatus(String userId) async {
     final index = _users.indexWhere((u) => u.userId == userId);
