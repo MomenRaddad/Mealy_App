@@ -196,7 +196,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           Stack(
             children: [
               ClipPath(
-                clipper: TopWaveClipper(),
+                //clipper: TopWaveClipper(),
                 child: Container(
                   color: Colors.green,
                   height: 200,
@@ -378,19 +378,19 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }
 }
 
-class TopWaveClipper extends CustomClipper<Path> {
-  @override
-  Path getClip(Size size) {
-    var path = Path();
-    path.lineTo(0, size.height - 50);
-    var controlPoint = Offset(size.width / 2, size.height);
-    var endPoint = Offset(size.width, size.height - 50);
-    path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
-    path.lineTo(size.width, 0);
-    path.close();
-    return path;
-  }
-
-  @override
-  bool shouldReclip(CustomClipper<Path> oldClipper) => false;
-}
+// class TopWaveClipper extends CustomClipper<Path> {
+//   @override
+//   Path getClip(Size size) {
+//     var path = Path();
+//     path.lineTo(0, size.height - 50);
+//     var controlPoint = Offset(size.width / 2, size.height);
+//     var endPoint = Offset(size.width, size.height - 50);
+//     path.quadraticBezierTo(controlPoint.dx, controlPoint.dy, endPoint.dx, endPoint.dy);
+//     path.lineTo(size.width, 0);
+//     path.close();
+//     return path;
+//   }
+//
+//   @override
+//   bool shouldReclip(CustomClipper<Path> oldClipper) => false;
+//}
