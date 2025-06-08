@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:meal_app/core/colors.dart';
@@ -31,7 +32,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-            
               Stack(
                 clipBehavior: Clip.none,
                 children: [
@@ -40,17 +40,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     width: double.infinity,
                     decoration: BoxDecoration(
                       image: DecorationImage(
-                        image: UserSession.backgroundURL != null &&
-                                UserSession.backgroundURL!.isNotEmpty
-                            ? NetworkImage(UserSession.backgroundURL!)
-                            : const AssetImage("assets/images/default_background.jpg")
-                                as ImageProvider,
+                        image:
+                            UserSession.backgroundURL != null &&
+                                    UserSession.backgroundURL!.isNotEmpty
+                                ? NetworkImage(UserSession.backgroundURL!)
+                                : const AssetImage(
+                                      "assets/images/default_background.png",
+                                    )
+                                    as ImageProvider,
                         fit: BoxFit.cover,
                       ),
                     ),
                   ),
 
-                
                   Positioned(
                     bottom: -40,
                     left: MediaQuery.of(context).size.width / 2 - 55,
@@ -62,12 +64,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           backgroundColor: Colors.white,
                           child: CircleAvatar(
                             radius: 50,
-                            backgroundImage: _profileImage != null
-                                ? FileImage(File(_profileImage!.path))
-                                : (UserSession.photoURL != null &&
+                            backgroundImage:
+                                _profileImage != null
+                                    ? FileImage(File(_profileImage!.path))
+                                    : (UserSession.photoURL != null &&
                                         UserSession.photoURL!.isNotEmpty)
                                     ? NetworkImage(UserSession.photoURL!)
-                                    : const AssetImage("assets/images/default_user.png")
+                                    : const AssetImage(
+                                          "assets/images/default_user.png",
+                                        )
                                         as ImageProvider,
                           ),
                         ),
@@ -82,7 +87,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 color: AppColors.primary,
                                 shape: BoxShape.circle,
                               ),
-                              child: const Icon(Icons.edit, size: 14, color: Colors.white),
+                              child: const Icon(
+                                Icons.edit,
+                                size: 14,
+                                color: Colors.white,
+                              ),
                             ),
                           ),
                         ),
@@ -93,11 +102,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
 
               const SizedBox(height: 60),
-              const Text("Hey! I'm", style: TextStyle(color: AppColors.textSecondary)),
+              const Text(
+                "Hey! I'm",
+                style: TextStyle(color: AppColors.textSecondary),
+              ),
               const SizedBox(height: 4),
               Text(
                 UserSession.name ?? 'Guest',
-                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               Text(
                 UserSession.email ?? '',
@@ -106,7 +121,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               const SizedBox(height: 30),
 
-              
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: Column(
@@ -117,35 +131,49 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       onTap: () {
                         Navigator.push(
                           context,
-                          MaterialPageRoute(builder: (_) => const AccountSettingsScreen()),
+                          MaterialPageRoute(
+                            builder: (_) => const AccountSettingsScreen(),
+                          ),
                         );
                       },
                     ),
-                    _tile(icon: Icons.favorite, label: "Favorites", onTap: () {}),
-                    _tile(icon: Icons.mail_outline, label: "Contact Us", onTap: () {}),
+                    _tile(
+                      icon: Icons.favorite,
+                      label: "Favorites",
+                      onTap: () {},
+                    ),
+                    _tile(
+                      icon: Icons.mail_outline,
+                      label: "Contact Us",
+                      onTap: () {},
+                    ),
                   ],
                 ),
               ),
 
               const SizedBox(height: 30),
 
-         
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
-                    onPressed: () {
-                   
+                    onPressed: () async {
                       UserSession.clear();
-                      Navigator.pushNamedAndRemoveUntil(context, '/home', (_) => false);
+                      await FirebaseAuth.instance.signOut();
+                      Navigator.of(
+                        context,
+                        rootNavigator: true,
+                      ).pushNamedAndRemoveUntil('/home', (route) => false);
                     },
                     icon: const Icon(Icons.logout),
                     label: const Text("Logout"),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.red,
                       padding: const EdgeInsets.symmetric(vertical: 14),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ),
@@ -158,8 +186,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-
-  Widget _tile({required IconData icon, required String label, required VoidCallback onTap}) {
+  Widget _tile({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
