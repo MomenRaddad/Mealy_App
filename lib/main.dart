@@ -1,4 +1,6 @@
 import 'package:firebase_core/firebase_core.dart' show Firebase;
+import 'package:meal_app/viewmodels/reminder_viewmodel.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -17,6 +19,7 @@ import 'package:meal_app/viewmodels/profile_viewmodel.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  tz.initializeTimeZones();
 
   runApp(
     MultiProvider(
@@ -26,6 +29,8 @@ void main() async {
         ChangeNotifierProvider(create: (_) => MealDetailsViewModel()),
         ChangeNotifierProvider(create: (_) => VisitedMealsViewModel()),
         ChangeNotifierProvider(create: (_) => ProfileViewModel()),
+
+        ChangeNotifierProvider(create: (_) => ReminderViewModel()),
       ],
       child: const MyApp(),
     ),
