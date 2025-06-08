@@ -1,10 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-
-class UserSession {
-  // This class is used to manage user session data.
-  // It stores user information.
-
 class UserSession {
   static String? uid;
   static String? name;
@@ -37,26 +32,6 @@ class UserSession {
 
   static String? photoURL;
   static String? backgroundURL;
-
-  // Static method to refresh user data from the database based on the current UID
-  static Future<void> refreshUserData() async {
-    if (uid == null) return;
-
-    try {
-      final doc =
-          await FirebaseFirestore.instance.collection('users').doc(uid).get();
-      final data = doc.data();
-
-      if (data != null) {
-        fromMap(data);
-      } else {
-        clear();
-      }
-    } catch (e) {
-      print("Error refreshing user data: $e");
-      clear();
-    }
-  }
 
   static void fromMap(Map<String, dynamic> data) {
     name = data['userName'];

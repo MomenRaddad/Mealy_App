@@ -10,8 +10,8 @@ class UserModel {
   final AccountStatus accountStatus;
   final DateTime createdAt;
   final String phoneNumber;
-  final String? photoURL;       
-  final String? backgroundURL;  
+  final String? photoURL;
+  final String? backgroundURL;
 
   UserModel({
     required this.userId,
@@ -28,48 +28,47 @@ class UserModel {
   });
 
   Map<String, dynamic> toJson() => {
-        'userId': userId,
-        'userName': userName,
-        'userEmail': userEmail,
-        'DOB': DOB.toIso8601String(),
-        'gender': gender,
-        'isPrivileged': isPrivileged,
-        'accountStatus': accountStatus.name,
-        'createdAt': createdAt.toIso8601String(),
-        'phoneNumber': phoneNumber,
-        if (photoURL != null) 'photoURL': photoURL,
-        if (backgroundURL != null) 'backgroundURL': backgroundURL,
-      };
+    'userId': userId,
+    'userName': userName,
+    'userEmail': userEmail,
+    'DOB': DOB.toIso8601String(),
+    'gender': gender,
+    'isPrivileged': isPrivileged,
+    'accountStatus': accountStatus.name,
+    'createdAt': createdAt.toIso8601String(),
+    'phoneNumber': phoneNumber,
+    if (photoURL != null) 'photoURL': photoURL,
+    if (backgroundURL != null) 'backgroundURL': backgroundURL,
+  };
 
   factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        userId: json['userId']?.toString() ?? '',
-        userName: json['userName'] ?? 'Unknown',
-        userEmail: json['userEmail'] ?? '',
-        accountStatus: AccountStatus.values.firstWhere(
-          (e) => e.name == json['accountStatus'],
-          orElse: () => AccountStatus.inactive,
-        ),
-        isPrivileged: json['isPrivileged'] ?? false,
-        createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
-        phoneNumber: json['phoneNumber'] ?? '',
-        gender: json['gender'] ?? 'Unspecified',
-        DOB: DateTime.tryParse(json['DOB'] ?? '') ?? DateTime(2000),
-        photoURL: json['photoURL'],
-        backgroundURL: json['backgroundURL'],
-      );
+    userId: json['userId']?.toString() ?? '',
+    userName: json['userName'] ?? 'Unknown',
+    userEmail: json['userEmail'] ?? '',
+    accountStatus: AccountStatus.values.firstWhere(
+      (e) => e.name == json['accountStatus'],
+      orElse: () => AccountStatus.inactive,
+    ),
+    isPrivileged: json['isPrivileged'] ?? false,
+    createdAt: DateTime.tryParse(json['createdAt'] ?? '') ?? DateTime.now(),
+    phoneNumber: json['phoneNumber'] ?? '',
+    gender: json['gender'] ?? 'Unspecified',
+    DOB: DateTime.tryParse(json['DOB'] ?? '') ?? DateTime(2000),
+    photoURL: json['photoURL'],
+    backgroundURL: json['backgroundURL'],
+  );
 
-  factory UserModel.empty() => 
-    UserModel(
-      userId: '',
-      userName: '',
-      userEmail: '',
-      DOB: DateTime(2000),
-      gender: '',
-      isPrivileged: false,
-      accountStatus: 'inactive',
-      createdAt: DateTime(2000),
-      phoneNumber: '',
-    );
+  factory UserModel.empty() => UserModel(
+    userId: '',
+    userName: '',
+    userEmail: '',
+    DOB: DateTime(2000),
+    gender: '',
+    isPrivileged: false,
+    accountStatus: AccountStatus.inactive,
+    createdAt: DateTime(2000),
+    phoneNumber: '',
+  );
 
   UserModel copyWith({
     String? userId,
@@ -98,5 +97,4 @@ class UserModel {
       backgroundURL: backgroundURL ?? this.backgroundURL,
     );
   }
-
 }
