@@ -1,12 +1,12 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
-import 'package:meal_app/core/colors.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:meal_app/utils/size_extensions.dart';
+import 'package:meal_app/models/meal_model.dart';
 import 'package:provider/provider.dart';
-import 'package:meal_app/viewmodels/meal_viewmodel.dart';
-
+import 'package:meal_app/core/colors.dart';
+import 'package:meal_app/utils/network_utils.dart';
+import 'package:meal_app/utils/size_extensions.dart';
+import 'package:meal_app/viewmodels/add_meal_viewmodel.dart';
 import 'meal_image_picker.dart';
 import 'meal_info_fields.dart';
 import 'ingredients_list.dart';
@@ -21,217 +21,226 @@ class AddMealScreen extends StatefulWidget {
 }
 
 class _AddMealScreenState extends State<AddMealScreen> {
+  final _formKey = GlobalKey<FormState>();
+  final _mealNameController = TextEditingController();
+  final _caloriesController = TextEditingController();
+  final _stepsController = TextEditingController();
   File? _selectedImage;
-  Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile != null) {
-      setState(() {
-        _selectedImage = File(pickedFile.path);
-      });
+  bool _isPicking = false;
+
+  CuisineType selectedCuisine = CuisineType.italian;
+  DurationType selectedDuration = DurationType.min30to60;
+  DietaryType selectedDietType = DietaryType.regular;
+  MealDifficulty selectedDifficulty = MealDifficulty.easy;
+  List<Map<String, String>> ingredients = [
+    {'name': '', 'unit': 'g', 'quantity': ''},
+  ];
+
+  void _pickImage() async {
+    if (_isPicking) return;
+    _isPicking = true;
+
+    try {
+      final pickedFile = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+      );
+
+      if (pickedFile != null) {
+        setState(() {
+          _selectedImage = File(pickedFile.path);
+        });
+      }
+    } catch (e) {
+    } finally {
+      _isPicking = false;
     }
   }
 
-  final TextEditingController _caloriesController = TextEditingController(
-    text: '1345',
-  );
-  final TextEditingController _mealNameController = TextEditingController(
-    text: 'Alfredo Chicken Pasta',
-  );
-  final TextEditingController _stepsController = TextEditingController(
-    text:
-        '1. Boil the water and salt it.\n2. Drop the pasta and wait for 6.5 mins.\n3. ...',
-  );
-
-  String selectedCuisine = 'Italian';
-  String selectedDuration = '~30 mins';
-  String selectedDietType = 'None';
-
-  List<Map<String, String>> ingredients = [
-    {'name': 'Milk', 'unit': 'liters', 'quantity': '2'},
-  ];
-
   void _addIngredient() {
-    setState(() {
-      ingredients.add({'name': '', 'unit': 'gram', 'quantity': '1'});
-    });
+    setState(() => ingredients.add({'name': '', 'unit': 'g', 'quantity': '1'}));
   }
 
   void _removeIngredient(int index) {
-    setState(() {
-      ingredients.removeAt(index);
-    });
+    if (ingredients.length == 1) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('At least one ingredient is required')),
+      );
+      return;
+    }
+    setState(() => ingredients.removeAt(index));
   }
 
-  void _showCustomPicker({
-    required BuildContext context,
-    required List<String> options,
-    required String label,
-    required String selectedValue,
-    required Function(String) onSelected,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
-      ),
-      builder:
-          (_) => SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const SizedBox(height: 10),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const Divider(),
-                ...options.map(
-                  (option) => ListTile(
-                    title: Center(
-                      child: Text(
-                        option,
-                        style: TextStyle(
-                          color:
-                              option == selectedValue
-                                  ? Colors.orange
-                                  : Colors.black,
-                          fontWeight:
-                              option == selectedValue
-                                  ? FontWeight.bold
-                                  : FontWeight.normal,
-                        ),
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.pop(context);
-                      onSelected(option);
-                    },
-                  ),
-                ),
-                const Divider(),
-                ListTile(
-                  title: const Center(
-                    child: Text('Cancel', style: TextStyle(color: Colors.red)),
-                  ),
-                  onTap: () => Navigator.pop(context),
-                ),
-              ],
-            ),
-          ),
+  Future<void> _handleSave(AddMealViewModel viewModel) async {
+    if (!(_formKey.currentState?.validate() ?? false)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all required fields')),
+      );
+      return;
+    }
+
+    bool ingredientsValid = ingredients.every(
+      (ing) =>
+          ing['name']!.trim().isNotEmpty &&
+          ing['quantity']!.trim().isNotEmpty &&
+          ing['unit']!.trim().isNotEmpty,
     );
+
+    if (!ingredientsValid) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please complete all ingredient fields')),
+      );
+      return;
+    }
+    viewModel.isLoading = true;
+    if (viewModel.isLoading) {
+      print("*************************83***********************");
+
+      print("Loading is true");
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (_) => const AlertDialog(
+              content: Row(
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(width: 16),
+                  Text("Saving meal..."),
+                ],
+              ),
+            ),
+      );
+      await viewModel.addMeal(
+        name: _mealNameController.text,
+        cuisine: selectedCuisine.toString().split('.').last,
+        duration: selectedDuration.toString().split('.').last,
+        calories: _caloriesController.text,
+        dietaryType: selectedDietType.toString().split('.').last,
+        ingredients: ingredients,
+        steps: _stepsController.text,
+        imageFile: _selectedImage,
+        difficulty: selectedDifficulty.toString().split('.').last,
+      );
+      if (Navigator.canPop(context)) {
+        Navigator.of(context).pop();
+      }
+      viewModel.isLoading = false;
+    }
+
+    if (viewModel.errorMessage == null) {
+      print("*************************113***********************");
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder:
+            (_) => const AlertDialog(
+              content: Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green),
+                  SizedBox(width: 12),
+                  Text("Meal saved successfully!"),
+                ],
+              ),
+            ),
+      );
+
+      Future.delayed(const Duration(seconds: 2)).then((_) {
+        if (Navigator.canPop(context)) {
+          Navigator.of(context).pop();
+          Navigator.of(context).pop();
+        }
+      });
+    } else {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(viewModel.errorMessage!)));
+    }
   }
 
-  final commonInputDecoration = InputDecoration(
-    labelText: 'Duration:',
-    labelStyle: TextStyle(color: AppColors.textPrimary, fontSize: 14),
-    floatingLabelStyle: WidgetStateTextStyle.resolveWith((states) {
-      if (states.contains(WidgetState.focused)) {
-        return TextStyle(
-          color: Colors.green,
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-        );
-      }
-
-      return TextStyle(color: AppColors.textPrimary);
-    }),
-    enabledBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: AppColors.textPrimary),
-    ),
-    focusedBorder: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(12),
-      borderSide: BorderSide(color: Colors.green, width: 2),
-    ),
-  );
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => MealViewModel(),
-      child: Consumer<MealViewModel>(
-        builder: (context, mealViewModel, _) {
-          return SafeArea(
-            child: Scaffold(
-              appBar: AppBar(
-                title: const Text('Meal Management'),
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
-                actions: [
-                  IconButton(
-                    icon: Icon(Icons.save),
-                    onPressed:
-                        mealViewModel.isLoading
-                            ? null
-                            : () async {
-                              await mealViewModel.addMeal(
-                                name: _mealNameController.text,
-                                cuisine: selectedCuisine,
-                                duration: selectedDuration,
-                                calories: _caloriesController.text,
-                                dietaryType: selectedDietType,
-                                ingredients: ingredients,
-                                steps: _stepsController.text,
-                                imageFile: _selectedImage,
-                              );
-
-                              if (mealViewModel.errorMessage == null) {
-                                Navigator.of(context).pop();
-                              } else {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(
-                                    content: Text(mealViewModel.errorMessage!),
-                                  ),
-                                );
-                              }
-                            },
-                  ),
-                ],
+      create: (_) => AddMealViewModel(),
+      child: Consumer<AddMealViewModel>(
+        builder: (context, viewModel, _) {
+          return Scaffold(
+            backgroundColor: AppColors.background,
+            appBar: AppBar(
+              title: const Text('Add Meal'),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                onPressed: () => Navigator.of(context).pop(),
               ),
-              body: SingleChildScrollView(
-                padding: const EdgeInsets.all(16),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.save),
+
+                  onPressed: () async {
+                    final isConnected =
+                        await NetworkUtils.checkInternetAndShowDialog(context);
+                    if (!isConnected) return;
+
+                    await _handleSave(viewModel);
+                  },
+                ),
+              ],
+            ),
+            body: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Form(
+                key: _formKey,
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     MealImagePicker(
                       selectedImage: _selectedImage,
                       onPickImage: _pickImage,
+                      defaultAsset: 'assets/images/images.png',
                     ),
-                    SizedBox(height: context.hp(20)),
+                    const SizedBox(height: 20),
                     MealInfoFields(
                       mealNameController: _mealNameController,
+                      caloriesController: _caloriesController,
                       selectedCuisine: selectedCuisine,
                       selectedDuration: selectedDuration,
                       selectedDietType: selectedDietType,
+                      selectedDifficulty: selectedDifficulty,
+                      onDifficultyChanged:
+                          (val) => setState(() => selectedDifficulty = val),
                       onCuisineChanged:
-                          (value) => setState(() => selectedCuisine = value),
+                          (val) => setState(() => selectedCuisine = val),
                       onDurationChanged:
-                          (value) => setState(() => selectedDuration = value),
+                          (val) => setState(() => selectedDuration = val),
                       onDietTypeChanged:
-                          (value) => setState(() => selectedDietType = value),
-                      caloriesController: _caloriesController,
+                          (val) => setState(() => selectedDietType = val),
+                      nameValidator:
+                          (val) =>
+                              val == null || val.isEmpty ? 'Required' : null,
+                      caloriesValidator:
+                          (val) =>
+                              val == null || val.isEmpty ? 'Required' : null,
                     ),
                     SizedBox(height: context.hp(20)),
                     IngredientsList(
                       ingredients: ingredients,
                       onRemoveIngredient: _removeIngredient,
-                      onUnitChanged: (index, val) {
-                        setState(() {
-                          ingredients[index]['unit'] = val;
-                        });
-                      },
+                      onUnitChanged:
+                          (index, val) =>
+                              setState(() => ingredients[index]['unit'] = val),
+                      showError: false,
                     ),
                     AddIngredientButton(onPressed: _addIngredient),
-                    const SizedBox(height: 16),
-                    StepsField(stepsController: _stepsController),
-                    if (mealViewModel.isLoading)
-                      Center(child: CircularProgressIndicator()),
+                    SizedBox(height: context.hp(16)),
+                    StepsField(
+                      stepsController: _stepsController,
+                      stepsValidator:
+                          (val) =>
+                              val == null || val.trim().isEmpty
+                                  ? 'Required'
+                                  : null,
+                      hintText: 'Enter the steps for preparing the meal...',
+                    ),
+                    // if (viewModel.isLoading)
+                    //   const Center(child: CircularProgressIndicator()),
                   ],
                 ),
               ),

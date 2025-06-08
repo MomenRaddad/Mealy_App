@@ -44,15 +44,17 @@ class CustomDropdownField extends StatelessWidget {
       ),
       builder:
           (_) => SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
+            child: ListView(
+              shrinkWrap: true,
               children: [
                 const SizedBox(height: 10),
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
+                Center(
+                  child: Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 const Divider(),
@@ -62,10 +64,11 @@ class CustomDropdownField extends StatelessWidget {
                       child: Text(
                         option,
                         style: TextStyle(
+                          fontSize: 16,
                           color:
                               option == selectedValue
-                                  ? Colors.orange
-                                  : Colors.black,
+                                  ? AppColors.primary
+                                  : AppColors.textPrimary,
                           fontWeight:
                               option == selectedValue
                                   ? FontWeight.bold
@@ -82,7 +85,10 @@ class CustomDropdownField extends StatelessWidget {
                 const Divider(),
                 ListTile(
                   title: const Center(
-                    child: Text('Cancel', style: TextStyle(color: Colors.red)),
+                    child: Text(
+                      'Cancel',
+                      style: TextStyle(color: AppColors.error),
+                    ),
                   ),
                   onTap: () => Navigator.pop(context),
                 ),
