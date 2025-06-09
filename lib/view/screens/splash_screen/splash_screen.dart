@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/models/user_session.dart';
+import 'package:meal_app/utils/network_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:meal_app/view/screens/Login_Signup/Login/login.dart';
@@ -28,6 +29,14 @@ class _SplashScreenState extends State<SplashScreen> {
       final prefs = await SharedPreferences.getInstance();
       final rememberMe = prefs.getBool('rememberMe') ?? false;
       final user = FirebaseAuth.instance.currentUser;
+
+      final isConnected =  await NetworkUtils.checkInternetAndShowDialog(context);
+      
+      if (!isConnected) {
+        // If no internet, show dialog and return
+        _checkLoginStatus(); // recursive retry
+        return;
+      }
 
       if (rememberMe && user != null) {
         final doc = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();

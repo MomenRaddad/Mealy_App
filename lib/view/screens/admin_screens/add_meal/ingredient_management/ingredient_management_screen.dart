@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:meal_app/core/app_theme.dart';
+import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/models/ingredient_model.dart';
 import 'package:meal_app/view/screens/admin_screens/add_meal/ingredient_management/ingredient_tile.dart';
 import 'package:meal_app/viewmodels/ingredient_view_model.dart';
@@ -7,7 +9,7 @@ import 'package:provider/provider.dart';
 class IngredientManagementScreen extends StatelessWidget {
   final bool isPickerMode;  
       
-  const IngredientManagementScreen({super.key, this.isPickerMode = false});
+  const IngredientManagementScreen({super.key, this.isPickerMode = true});
 
   void _showAddDialog(BuildContext context, {Ingredient? ingredient}) {
     final nameController = TextEditingController(text: ingredient?.name);
@@ -32,6 +34,7 @@ class IngredientManagementScreen extends StatelessWidget {
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
+        backgroundColor: AppColors.background,
         title: Text(ingredient == null ? 'Add Ingredient' : 'Edit Ingredient'),
         content: SingleChildScrollView(
           child: Column(
@@ -72,7 +75,10 @@ class IngredientManagementScreen extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
-            child: const Text('Cancel'),
+            child: const Text(
+              'Cancel',
+              style: TextStyle(color: AppColors.textSecondary),
+              ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -90,7 +96,10 @@ class IngredientManagementScreen extends StatelessWidget {
 
               Navigator.of(ctx).pop();
             },
-            child: const Text('Save'),
+            child: const Text(
+              'Save',
+              style: TextStyle(color: AppColors.background)
+              ),
           ),
         ],
       ),
@@ -113,11 +122,13 @@ class IngredientManagementScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: isPickerMode
-          ? null
-          : FloatingActionButton(
-              child: const Icon(Icons.add),
+          ?
+          FloatingActionButton(
+              backgroundColor: AppColors.primary,              
+              child: const Icon(Icons.add, color: Colors.white, size: 30),
               onPressed: () => _showAddDialog(context),
-            ),
+            )
+          : null,
       body: Column(
         children: [
           Padding(

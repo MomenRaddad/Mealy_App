@@ -249,7 +249,7 @@ class _FullUserTableState extends State<FullUserTable> {
                                           ),
                                           DataCell(
                                             Text(
-                                              user.accountStatus.toString(),
+                                              user.accountStatus == AccountStatus.active ? 'Active' : 'Inactive',
                                               style: TextStyle(
                                                 color:
                                                     user.accountStatus ==

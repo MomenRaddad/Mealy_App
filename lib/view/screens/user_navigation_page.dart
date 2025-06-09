@@ -52,8 +52,8 @@ class _UserNavigationPageState extends State<UserNavigationPage> {
             textStyle: AppNavbarStyle.textStyle,
           ),
           PersistentBottomNavBarItem(
-            icon: Icon(Icons.list, size: AppNavbarStyle.iconSize),
-            title: "Tasks",
+          icon: Icon(Icons.receipt, size: AppNavbarStyle.iconSize),
+            title: "Meals",
             activeColorPrimary: AppColors.primary,
             inactiveColorPrimary: AppColors.textSecondary,
             textStyle: AppNavbarStyle.textStyle,

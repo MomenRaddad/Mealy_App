@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:meal_app/core/colors.dart';
 import 'package:meal_app/models/user_session.dart';
+import 'package:meal_app/utils/network_utils.dart';
 import 'package:meal_app/utils/validation_utils.dart';
 
 import 'package:meal_app/view/screens/Login_Signup/Signup/signup.dart';
@@ -24,6 +25,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _passwordController = TextEditingController();
 
   Future<void> _login() async {
+    print("------------28, _login called");
+
     if (!_formKey.currentState!.validate()) return;
 
     showDialog(
@@ -216,7 +219,17 @@ class _LoginScreenState extends State<LoginScreen> {
                         backgroundColor: AppColors.primary,
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
                       ),
-                      onPressed: _login,
+                      onPressed: () async {
+                        final isConnected = await NetworkUtils.checkInternetAndShowDialog(context);
+                        print("------------222, isConnected: $isConnected");
+
+                        if (!isConnected) {
+                          // If no internet, show dialog and return
+                          return;
+                        }
+                        print("------------227");
+                        await _login();
+                      },
                       child: const Text("Login"),
 
                     ),
