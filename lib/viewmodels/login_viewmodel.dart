@@ -10,6 +10,22 @@ class LoginViewModel with ChangeNotifier {
 
   Future<String?> login(String email, String password, {bool rememberMe = false}) async {
     try {
+      final query = await _firestore
+          .collection('users')
+          .where('userEmail', isEqualTo: email.trim())
+          .limit(1)
+          .get();
+
+      if (query.docs.isEmpty) {
+        return "No account data found for this email.";
+      }
+
+      final data = query.docs.first.data();
+      final status = data['accountStatus']?.toString().toLowerCase();
+      if (status != 'active') {
+        return "Your account is not active and has been suspended.\nPlease contact support or wait for approval.\n\n-Status: $status\n-Email: $email\n-UID: ${data['userId']}";
+      }
+
       final userCredential = await _auth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password.trim(),
@@ -24,19 +40,12 @@ class LoginViewModel with ChangeNotifier {
         await prefs.setBool('rememberMe', true);
       }
 
-      // Initialize session
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      final data = doc.data();
-
-      if (data != null) {
-        UserSession.fromMap(data);
-      }
+      UserSession.fromMap(data);
 
       // Track unique daily login
       final today = DateTime.now();
       final docId = "${today.year}-${today.month}-${today.day}";
 
-      // LOGIN LOGIC
       final loginRef = _firestore.collection('daily_logins').doc(docId);
       final loginSnap = await loginRef.get();
 
@@ -54,13 +63,25 @@ class LoginViewModel with ChangeNotifier {
         'date': today.toIso8601String(),
       }, SetOptions(merge: true));
 
-
       return null; // Success
-    } on FirebaseAuthException catch (e) {
-      return e.message ?? 'Login failed';
-    } catch (e) {
-      return 'An error occurred';
-    }
-  }
 
+    } on FirebaseAuthException catch (e) {
+      switch (e.code) {
+        case 'user-not-found':
+          return 'No user found with the email `$email`.';
+        case 'wrong-password':
+          return 'Incorrect password.';
+        case 'invalid-email':
+          return 'The email address is not valid.';
+        case 'user-disabled':
+          return 'This user account has been disabled.';
+        case 'invalid-credential':
+          return 'The credentials are invalid or expired.\nThis can happen if the email is unregistered or the password is incorrect.';
+        default:
+          return e.message ?? 'Login failed. Please try again.';
+      }
+    } catch (e) {
+      return 'An error occurred. Please try again.';
+    }
+  } 
 }

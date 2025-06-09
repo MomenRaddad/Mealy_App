@@ -74,6 +74,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
       return;
     }
 
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) {
+        return Dialog(
+          backgroundColor: AppColors.background,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          child: Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                CircularProgressIndicator(color: AppColors.primary),
+                SizedBox(width: 20),
+                Text("Creating your account..."),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+
     final vm = SignUpViewModel();
     String? result = await vm.registerUser(
       name: name,
@@ -84,6 +106,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
       isAdmin: _isAdminAccount,
       phoneNumber: phone,
     );
+    
+    Navigator.of(context).pop(); // dismiss loading dialog
 
     showDialog(
       context: context,
