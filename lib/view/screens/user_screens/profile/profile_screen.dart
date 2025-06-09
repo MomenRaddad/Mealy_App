@@ -45,7 +45,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     UserSession.backgroundURL!.isNotEmpty
                                 ? NetworkImage(UserSession.backgroundURL!)
                                 : const AssetImage(
-                                      "assets/images/default_background.jpg",
+                                      "assets/images/default_background.png",
                                     )
                                     as ImageProvider,
                         fit: BoxFit.cover,

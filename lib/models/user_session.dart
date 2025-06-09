@@ -10,10 +10,6 @@ class UserSession {
   static String? createdAt;
   static String? dob;
   static bool isPrivileged = false;
-
-  static String? photoURL;
-  static String? backgroundURL;
-
   // Static method to refresh user data from the database based on the current UID
   static Future<void> refreshUserData() async {
     if (uid == null) return;
@@ -33,6 +29,9 @@ class UserSession {
       clear();
     }
   }
+
+  static String? photoURL;
+  static String? backgroundURL;
 
   static void fromMap(Map<String, dynamic> data) {
     name = data['userName'];

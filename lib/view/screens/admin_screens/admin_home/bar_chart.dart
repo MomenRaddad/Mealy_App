@@ -11,14 +11,19 @@ class DailyVisitsChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final max = visitsPerDay.reduce((a, b) => a > b ? a : b);
+    var max = visitsPerDay.reduce((a, b) => a > b ? a : b);
+    if (max < 5) {
+      max = 5;
+    }
+    print(5);
+    // double interval=  max
     return SizedBox(
       height: context.hp(200),
       child: BarChart(
         BarChartData(
           alignment: BarChartAlignment.spaceBetween,
           maxY: max,
-          barGroups: _buildData(size),
+          barGroups: _buildData(size, max),
           titlesData: FlTitlesData(
             leftTitles: AxisTitles(
               sideTitles: SideTitles(
@@ -65,7 +70,7 @@ class DailyVisitsChart extends StatelessWidget {
     );
   }
 
-  List<BarChartGroupData> _buildData(final size) {
+  List<BarChartGroupData> _buildData(final size, double max) {
     return List.generate(visitsPerDay.length, (index) {
       double maxValue = visitsPerDay.reduce((a, b) => a > b ? a : b);
       maxValue = maxValue % 2 == 0 ? maxValue : maxValue + 1;
@@ -79,7 +84,7 @@ class DailyVisitsChart extends StatelessWidget {
             borderRadius: BorderRadius.circular(4),
             backDrawRodData: BackgroundBarChartRodData(
               show: true,
-              toY: maxValue,
+              toY: max,
               color: Colors.green.shade100,
             ),
           ),
