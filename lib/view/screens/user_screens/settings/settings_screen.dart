@@ -1,8 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:meal_app/models/user_session.dart';
 import 'package:provider/provider.dart';
 import 'package:meal_app/provider/theme_provider.dart';
 import 'package:meal_app/view/screens/user_screens/history/history_summary_screen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SettingsPreferencesScreen extends StatefulWidget {
   const SettingsPreferencesScreen({super.key});
@@ -55,7 +57,7 @@ class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
     ).showSnackBar(const SnackBar(content: Text("Cache cleared")));
   }
 
-  void _logout() async {
+  /* void _logout() async {
     await FirebaseAuth.instance.signOut();
 
     Navigator.of(
@@ -65,6 +67,37 @@ class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
     // ScaffoldMessenger.of(
     //   context,
     // ).showSnackBar(const SnackBar(content: Text("Logged out")));
+  } */
+
+  Future<void> _logout() async {
+    try {
+      // Firebase Sign Out
+      await FirebaseAuth.instance.signOut();
+
+      // Clear SharedPreferences (rememberMe)
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('rememberMe');
+      await prefs.remove('lastResetTime');
+
+      // Clear Session
+      UserSession.clear();
+
+      // Show Feedback
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Logged out")),
+        );
+
+        // Navigate to login screen
+        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      }
+    } catch (e) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Logout failed: ${e.toString()}")),
+        );
+      }
+    }
   }
 
   void _openHistoryScreen() {
