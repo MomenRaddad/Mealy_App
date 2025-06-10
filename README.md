@@ -1,16 +1,28 @@
-# meal_app
+## 🚀 Development Workflow
 
-A new Flutter project.
+Welcome to the `dev` branch — **primary development branch**. This branch is the main integration point for all ongoing feature work and improvements.
 
-## Getting Started
+### 📌 Branching Strategy
 
-This project is a starting point for a Flutter application.
+- **`main` branch**  
+  - Always holds **production-ready** code.  
+  - Only updated via **pull requests from `dev`**.  
+  - No direct commits allowed.
 
-A few resources to get you started if this is your first Flutter project:
+- **`dev` branch** *(this branch)*  
+  - Used for active development.  
+  - New features and fixes are merged here first.  
+  - Tested and stabilized before merging into `main`.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+- **`feature/your-feature-name` branches**  
+  - Created off of `dev`.  
+  - Each feature or fix gets its own branch.  
+  - Open a pull request to `dev` when completed.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 🔁 Typical Workflow
+
+1. Pull the latest `dev`:
+   ```bash
+   git checkout dev
+   git pull origin dev
+
