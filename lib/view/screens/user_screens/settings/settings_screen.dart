@@ -57,47 +57,21 @@ class _SettingsPreferencesScreenState extends State<SettingsPreferencesScreen> {
     ).showSnackBar(const SnackBar(content: Text("Cache cleared")));
   }
 
-  /* void _logout() async {
+  void _logout() async {
     await FirebaseAuth.instance.signOut();
 
+     // Clear SharedPreferences (rememberMe)
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('rememberMe');
+    await prefs.remove('lastResetTime');
+    
+    // Clear Session
+    UserSession.clear();
+    
     Navigator.of(
       context,
       rootNavigator: true,
-    ).pushNamedAndRemoveUntil('/home', (route) => false);
-    // ScaffoldMessenger.of(
-    //   context,
-    // ).showSnackBar(const SnackBar(content: Text("Logged out")));
-  } */
-
-  Future<void> _logout() async {
-    try {
-      // Firebase Sign Out
-      await FirebaseAuth.instance.signOut();
-
-      // Clear SharedPreferences (rememberMe)
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.remove('rememberMe');
-      await prefs.remove('lastResetTime');
-
-      // Clear Session
-      UserSession.clear();
-
-      // Show Feedback
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Logged out")),
-        );
-
-        // Navigate to login screen
-        Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
-      }
-    } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Logout failed: ${e.toString()}")),
-        );
-      }
-    }
+    ).pushNamedAndRemoveUntil('/home', (route) => false);    
   }
 
   void _openHistoryScreen() {
